@@ -66,6 +66,47 @@ def fetch_series_data(tvdb, series_id, output_path, season_type="default", lang=
         page += 1
 
 
+    # need the entire series
+    series = tvdb.get_series_extended(series_id)
+    serseason_type = "official" if season_type == "default" else season_type
+    seasons_dict={}
+
+    # strip only single prefered order
+    series_seasons = [
+        s for s in series["seasons"]
+        if s["type"]["type"] == serseason_type
+    ]
+
+    # find translated title and description
+    for season in series_seasons:
+        season_id = season["id"]
+        s_num = season["number"]
+        seasons_dict[s_num]={}
+
+        # Base season name (often None if not set at the root level)
+        title = season.get("name")
+        title = overview = ""
+
+        # Fetch language-specific title and overview
+        try:
+            translation = tvdb.get_season_translation(season_id, lang)
+            title = translation.get("name")
+            overview = translation.get("overview")
+        except Exception:
+            # Fallback if no translation exists for the requested language
+            title = title
+
+        if title == f"Season {s_num}":
+            title = ''
+
+        seasons_dict[s_num]["title"] = title
+        seasons_dict[s_num]["summary"] = overview
+
+        #print(f"TT: {title}")  #DEBUG
+        #print(f"TS: {overview}")  #DEBUG
+        #print(f"TN: {s_num}")  #DEBUG
+
+
     # Organize episodes by season -> episode number
     seasons_dict = {}
     for ep in episodes:
@@ -93,51 +134,17 @@ def fetch_series_data(tvdb, series_id, output_path, season_type="default", lang=
             seasons_dict[s_num]["episodes"][e_num] = ep_entry
 
 
-
-    # need the entire series
-    series = tvdb.get_series_extended(series_id)
-    serseason_type = "official" if season_type == "default" else season_type
-
-    # strip only single prefered order
-    series_seasons = [
-        s for s in series["seasons"]
-        if s["type"]["type"] == serseason_type
-    ]
-
-    # find translated title and description
-    for season in series_seasons:
-        season_id = season["id"]
-        s_num = season["number"]
-
-        # Base season name (often None if not set at the root level)
-        title = season.get("name")
-        overview = ""
-
-        # Fetch language-specific title and overview
-        try:
-            translation = tvdb.get_season_translation(season_id, lang)
-            title = translation.get("name") or title or f"Season {s_num}"
-            overview = translation.get("overview")
-        except Exception:
-            # Fallback if no translation exists for the requested language
-            title = title or f"Season {s_num}"
-
-        if title == f"Season {s_num}":
-            title = ''
-
-        seasons_dict[s_num]["title"] = title
-        seasons_dict[s_num]["summary"] = overview
-
-
     # Sort seasons and episodes numerically
     sorted_seasons = {}
     for s_num in sorted(seasons_dict.keys()):
         sorted_eps = dict(sorted(seasons_dict[s_num]["episodes"].items()))
         sorted_seasons[s_num] = {}
-        if seasons_dict[s_num]["title"]:
+        if seasons_dict[s_num].get("title"):
             sorted_seasons[s_num]["title"] = seasons_dict[s_num]["title"]
-        if seasons_dict[s_num]["summary"]:
+            #print(f"ST: {seasons_dict[s_num]["title"]}")  #DEBUG
+        if seasons_dict[s_num].get("summary"):
             sorted_seasons[s_num]["summary"] = seasons_dict[s_num]["summary"]
+            #print(f"SS: {seasons_dict[s_num]["summary"]}")  #DEBUG
         sorted_seasons[s_num]["episodes"] = sorted_eps
 
     # If IMDB is available, use that to match, in case Plex deprecates TVDB linking
@@ -156,7 +163,8 @@ def fetch_series_data(tvdb, series_id, output_path, season_type="default", lang=
         show_block["originally_available"] = show_available
     if show_rating:
         show_block["content_rating"] = show_rating
-    if season_type!="default":
+    #if season_type!="default":
+    if season_type:
         show_block["label"] = "tvdb-" + season_type
 
     # Now build the episide tree
@@ -187,5 +195,4 @@ if __name__ == "__main__":
     )
 
     print(f"Successfully generated {OUTPUT_FILE} for '{show_title}'.")
-
 
