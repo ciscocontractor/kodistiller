@@ -24,10 +24,10 @@ In your library, add tags to each series folder to control it, {tvdb-:digits:} a
 options are the API strings for relevant orders, EX:  "default" (Aired Order), "official", "dvd", "absolute", "alternate" (Streaming)
 If you don't set an order tag, it uses "default", which works fine for many shows.
 
-Example:  /media/television/Firefly (2002) {tvdb-78874} {tvdborder-dvd}
+Example:  `/media/television/Firefly (2002) {tvdb-78874} {tvdborder-dvd}`
 
 If you don't want to do folder naming, you can run manually as:
-        python buildtvdbyaml.py 78874 dvd
+        `python buildtvdbyaml.py 78874 dvd`
 
 Note, Kometa cannot change the order flag in Plex for the library or series, that's a manual step.
 
