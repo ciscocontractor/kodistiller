@@ -52,20 +52,7 @@ def fetch_series_data(tvdb, series_id, output_path, season_type="default", lang=
         except Exception:
             pass  # Fallback to default language if translation is missing
 
-    # Fetch all paginated episodes
-    episodes = []
-    page = 0
-    while True:
-        ep_data = tvdb.get_series_episodes(
-            series_id, season_type=season_type, page=page, lang=lang
-        )
-        batch = ep_data.get("episodes", [])
-        if not batch:
-            break
-        episodes.extend(batch)
-        page += 1
-
-
+ 
     # need the entire series
     series = tvdb.get_series_extended(series_id)
     serseason_type = "official" if season_type == "default" else season_type
@@ -106,6 +93,19 @@ def fetch_series_data(tvdb, series_id, output_path, season_type="default", lang=
         #print(f"TS: {overview}")  #DEBUG
         #print(f"TN: {s_num}")  #DEBUG
 
+    
+   # Fetch all paginated episodes
+    episodes = []
+    page = 0
+    while True:
+        ep_data = tvdb.get_series_episodes(
+            series_id, season_type=season_type, page=page, lang=lang
+        )
+        batch = ep_data.get("episodes", [])
+        if not batch:
+            break
+        episodes.extend(batch)
+        page += 1
 
     # Organize episodes by season -> episode number
     seasons_dict = {}
@@ -147,6 +147,7 @@ def fetch_series_data(tvdb, series_id, output_path, season_type="default", lang=
             #print(f"SS: {seasons_dict[s_num]["summary"]}")  #DEBUG
         sorted_seasons[s_num]["episodes"] = sorted_eps
 
+    
     # If IMDB is available, use that to match, in case Plex deprecates TVDB linking
     mapping_id = imdb_id if imdb_id != "None" else int(series_id)
 
