@@ -8,9 +8,13 @@ This is my first attempt at a workaround to import data via the TVDB API into Pl
 I am no expert on Kometa or the TVDB, and I don't really want to support this code long term,
 so I am offering it without any license or terms into the public domain, with sole hope that it helps 
 those who will face a metadata crisis, or that someone is inspired to build a better tool.
+No warranty is expressed or implied, as to usability or fitness.
+
+Some customization of each file will be required to fit your environment.
+Don't publicly share your API keys.
 
 AI Disclosure, some AI generated code is included.
-
+-
 
 This should automate building a kometa metadata yaml file for each tv series from the TVDB API.
 It requires an API key, which you should be able to get as in independent developer.
