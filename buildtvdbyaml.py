@@ -52,7 +52,7 @@ def fetch_series_data(tvdb, series_id, output_path, season_type="default", lang=
         except Exception:
             pass  # Fallback to default language if translation is missing
 
- 
+
     # need the entire series
     series = tvdb.get_series_extended(series_id)
     serseason_type = "official" if season_type == "default" else season_type
@@ -68,11 +68,11 @@ def fetch_series_data(tvdb, series_id, output_path, season_type="default", lang=
     for season in series_seasons:
         season_id = season["id"]
         s_num = season["number"]
-        seasons_dict[s_num]={}
+        seasons_dict[s_num] = {"episodes": {}}
 
         # Base season name (often None if not set at the root level)
-        title = season.get("name")
         title = overview = ""
+        title = season.get("name")
 
         # Fetch language-specific title and overview
         try:
@@ -89,11 +89,11 @@ def fetch_series_data(tvdb, series_id, output_path, season_type="default", lang=
         seasons_dict[s_num]["title"] = title
         seasons_dict[s_num]["summary"] = overview
 
-        #print(f"TT: {title}")  #DEBUG
+        print(f"TT: {title}")  #DEBUG
         #print(f"TS: {overview}")  #DEBUG
         #print(f"TN: {s_num}")  #DEBUG
 
-    
+
    # Fetch all paginated episodes
     episodes = []
     page = 0
@@ -108,16 +108,17 @@ def fetch_series_data(tvdb, series_id, output_path, season_type="default", lang=
         page += 1
 
     # Organize episodes by season -> episode number
-    seasons_dict = {}
     for ep in episodes:
         s_num = ep.get("seasonNumber")
         e_num = ep.get("number")
         if s_num is None or e_num is None:
             continue
 
+        #print(f"EN: {s_num}")  #DEBUG
         if s_num not in seasons_dict:
             seasons_dict[s_num] = {"episodes": {}}
-            seasons_dict[s_num]["title"] = show_title
+        if not seasons_dict[s_num].get("episodes"):
+            seasons_dict[s_num]["episodes"] = {}
 
         # build array of episode data
         ep_entry = {}
@@ -141,13 +142,13 @@ def fetch_series_data(tvdb, series_id, output_path, season_type="default", lang=
         sorted_seasons[s_num] = {}
         if seasons_dict[s_num].get("title"):
             sorted_seasons[s_num]["title"] = seasons_dict[s_num]["title"]
-            #print(f"ST: {seasons_dict[s_num]["title"]}")  #DEBUG
+            print(f"ST: {seasons_dict[s_num]["title"]}")  #DEBUG
         if seasons_dict[s_num].get("summary"):
             sorted_seasons[s_num]["summary"] = seasons_dict[s_num]["summary"]
             #print(f"SS: {seasons_dict[s_num]["summary"]}")  #DEBUG
         sorted_seasons[s_num]["episodes"] = sorted_eps
 
-    
+
     # If IMDB is available, use that to match, in case Plex deprecates TVDB linking
     mapping_id = imdb_id if imdb_id != "None" else int(series_id)
 
