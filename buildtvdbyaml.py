@@ -76,6 +76,7 @@ def fetch_series_data(tvdb, series_id, output_path, season_type="default", lang=
 
         if s_num not in seasons_dict:
             seasons_dict[s_num] = {"episodes": {}}
+            seasons_dict[s_num]["title"] = show_title
 
         # build array of episode data
         ep_entry = {}
@@ -91,11 +92,53 @@ def fetch_series_data(tvdb, series_id, output_path, season_type="default", lang=
         if ep_entry:
             seasons_dict[s_num]["episodes"][e_num] = ep_entry
 
+
+
+    # need the entire series
+    series = tvdb.get_series_extended(series_id)
+    serseason_type = "official" if season_type == "default" else season_type
+
+    # strip only single prefered order
+    series_seasons = [
+        s for s in series["seasons"]
+        if s["type"]["type"] == serseason_type
+    ]
+
+    # find translated title and description
+    for season in series_seasons:
+        season_id = season["id"]
+        s_num = season["number"]
+
+        # Base season name (often None if not set at the root level)
+        title = season.get("name")
+        overview = ""
+
+        # Fetch language-specific title and overview
+        try:
+            translation = tvdb.get_season_translation(season_id, lang)
+            title = translation.get("name") or title or f"Season {s_num}"
+            overview = translation.get("overview")
+        except Exception:
+            # Fallback if no translation exists for the requested language
+            title = title or f"Season {s_num}"
+
+        if title == f"Season {s_num}":
+            title = ''
+
+        seasons_dict[s_num]["title"] = title
+        seasons_dict[s_num]["summary"] = overview
+
+
     # Sort seasons and episodes numerically
     sorted_seasons = {}
     for s_num in sorted(seasons_dict.keys()):
         sorted_eps = dict(sorted(seasons_dict[s_num]["episodes"].items()))
-        sorted_seasons[s_num] = {"episodes": sorted_eps}
+        sorted_seasons[s_num] = {}
+        if seasons_dict[s_num]["title"]:
+            sorted_seasons[s_num]["title"] = seasons_dict[s_num]["title"]
+        if seasons_dict[s_num]["summary"]:
+            sorted_seasons[s_num]["summary"] = seasons_dict[s_num]["summary"]
+        sorted_seasons[s_num]["episodes"] = sorted_eps
 
     # If IMDB is available, use that to match, in case Plex deprecates TVDB linking
     mapping_id = imdb_id if imdb_id != "None" else int(series_id)
@@ -144,4 +187,5 @@ if __name__ == "__main__":
     )
 
     print(f"Successfully generated {OUTPUT_FILE} for '{show_title}'.")
+
 
