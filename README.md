@@ -39,9 +39,10 @@ I tried to make the shell script POSIX and not require GNU extensions, YMMV.
 Yes, I had AI help with a lot of the python, as I'd never interacted with TVDB API directly.
 there is at least one package you'll need to install, see first line of that code.
 
-It currently pulls series and episode titles, summary, and first air date, but NOT for season because it made the looping harder,
+It currently pulls series, season, and episode titles, summary, and first air date, ~~but NOT for season because it made the looping harder,~~*
 series content rating, and episode thumbnails. No series and season thumbs because it returns an array of all available art.
 This is probably an area where personal preference makes manually picking artwork preferred anyway, and a one time task.
+*Adding: Figured out how to update the season titles and summary.
 
 If you change the language variable in the python script, it will prefer localized series title and summary, but not episodes yet.
 
