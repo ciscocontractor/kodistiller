@@ -89,7 +89,7 @@ def fetch_series_data(tvdb, series_id, output_path, season_type="default", lang=
         seasons_dict[s_num]["title"] = title
         seasons_dict[s_num]["summary"] = overview
 
-        print(f"TT: {title}")  #DEBUG
+        #print(f"TT: {title}")  #DEBUG
         #print(f"TS: {overview}")  #DEBUG
         #print(f"TN: {s_num}")  #DEBUG
 
@@ -142,7 +142,7 @@ def fetch_series_data(tvdb, series_id, output_path, season_type="default", lang=
         sorted_seasons[s_num] = {}
         if seasons_dict[s_num].get("title"):
             sorted_seasons[s_num]["title"] = seasons_dict[s_num]["title"]
-            print(f"ST: {seasons_dict[s_num]["title"]}")  #DEBUG
+            #print(f"ST: {seasons_dict[s_num]["title"]}")  #DEBUG
         if seasons_dict[s_num].get("summary"):
             sorted_seasons[s_num]["summary"] = seasons_dict[s_num]["summary"]
             #print(f"SS: {seasons_dict[s_num]["summary"]}")  #DEBUG
