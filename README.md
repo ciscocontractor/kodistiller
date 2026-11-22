@@ -27,7 +27,7 @@ If you don't set an order tag, it uses "default", which works fine for many show
 Example:  `/media/television/Firefly (2002) {tvdb-78874} {tvdborder-dvd}`
 
 If you don't want to do folder naming, you can run manually as:
--python buildtvdbyaml.py 78874 dvd
+- python buildtvdbyaml.py 78874 dvd
 
 Note, Kometa cannot change the order flag in Plex for the library or series, that's a manual step.
 
