@@ -48,5 +48,4 @@ If you change the language variable in the python script, it will prefer localiz
 
 It will add a Plex label like "tvdb-dvd" to make it easy to find which shows have non-plex-managed metadata from inside the Plex UI.
 
-As I'm not certain how Plex will handle TVDB IDs in the future, the import data will match a series on it's IMDB ID
-if it exists, and fallback to match on the TVDB ID otherwise. I don't believe Kometa has support TMDB IDs for television.
+As I'm not certain how Plex will handle TVDB IDs in the future, the import data will match a series on it's IMDB ID if it exists, ~~and fallback to match on the TVDB ID otherwise~~*. I don't believe Kometa has support TMDB IDs for television.  *Now it processes the data twice using both TVDB and IMDB IDs if they exist.
