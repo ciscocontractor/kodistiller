@@ -10,7 +10,7 @@ cd "$CONFIG_PATH"
 find "$MEDIA_PATH" -name '*{tvdb-*' | awk '{ \
   if (match($0, /tvdb-[[:digit:]]+/)) {  printf  "%s ", substr($0, RSTART + 5, RLENGTH - 5) } \
   if (match($0, /tvdborder-[[:alpha:]]+/)) { print substr($0, RSTART + 10, RLENGTH - 10) } else { print "default" } \
-}' | sort -u | tee serieslist.txt | xargs -n 2 python buildtvdbyaml.py > run.log
+}' | sort -u | tee serieslist.log | xargs -n 2 python buildtvdbyaml.py  | tee run.log
 
 
 exit
