@@ -1,5 +1,7 @@
 #!/bin/sh
 
+### Ver 2026-11-23
+
 #Set file path for your environment
 MEDIA_PATH='/media/television'
 CONFIG_PATH='/usr/local/share/kometa/config/metadata/tvdb/'
