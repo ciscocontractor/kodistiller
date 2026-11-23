@@ -150,7 +150,9 @@ def fetch_series_data(tvdb, series_id, output_path, season_type="default", lang=
 
 
     # If IMDB is available, use that to match, in case Plex deprecates TVDB linking
-    mapping_id = imdb_id if imdb_id != "None" else int(series_id)
+    #mapping_id = imdb_id if imdb_id != "None" else int(series_id)
+    #this has proved problematic where Plex series link to IMDB is inaccurate
+    mapping_id = int(series_id)
 
     # Build top-level Kometa metadata structure
     show_block = {
