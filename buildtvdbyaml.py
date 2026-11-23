@@ -10,8 +10,14 @@ import yaml
 import sys
 
 # Configuration  You want to customize this section
-TVDB_API_KEY = "YOUR_TVDB_V4_API_KEY"
+# Got tired of stripping my key every time I updated git, so you can do manually below or put it in ./api.key
+try:
+    with open("api.key", "r", encoding="utf-8") as f:
+        TVDB_API_KEY = str(f.read()).strip() or "YOUR_TVDB_V4_API_KEY"  # falls back if file empty/missing
+except OSError:
+    TVDB_API_KEY = "YOUR_TVDB_V4_API_KEY"
 TVDB_PIN = None  # Set to your subscriber PIN string if required by your project
+
 SERIES_ID = sys.argv[1] if len(sys.argv) > 1 else "121361"  # Example: Game of Thrones
 SEASON_TYPE = sys.argv[2] if len(sys.argv) > 2 else "default"
 #Some order options: "default" (Aired), "official", "dvd", "absolute", "alternate" (Streaming), "regional", and "altdvd"
