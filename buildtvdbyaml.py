@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+### Ver 2026-11-23
+
 ### Be sure to install tvdb-v4 python Package
 #python -m pip install tvdb_v4_official
 
@@ -52,9 +54,10 @@ def fetch_series_data(tvdb, series_id, output_path, season_type="default", lang=
         except Exception:
             pass  # Fallback to default language if translation is missing
 
+    ########
 
-    # need the entire series
-    series = tvdb.get_series_extended(series_id)
+    # build season specific data, loop by season ID, map to season numbering
+    # episodes have a default season which they belong to, but there is no default season per se
     serseason_type = "official" if season_type == "default" else season_type
     seasons_dict={}
 
@@ -93,8 +96,11 @@ def fetch_series_data(tvdb, series_id, output_path, season_type="default", lang=
         #print(f"TS: {overview}")  #DEBUG
         #print(f"TN: {s_num}")  #DEBUG
 
+    ########
 
-   # Fetch all paginated episodes
+    # now loop the episode tree, which is ordered by episode ID, including season markers as a child item,
+    # because an episode item will belown to different seasons based on the season_type
+    # unsure if we need to force season_type official instead of default. are there cases where default!=official?
     episodes = []
     page = 0
     while True:
@@ -148,17 +154,12 @@ def fetch_series_data(tvdb, series_id, output_path, season_type="default", lang=
             #print(f"SS: {seasons_dict[s_num]["summary"]}")  #DEBUG
         sorted_seasons[s_num]["episodes"] = sorted_eps
 
+    ########
 
-    # If IMDB is available, use that to match, in case Plex deprecates TVDB linking
-    #mapping_id = imdb_id if imdb_id != "None" else int(series_id)
-    #this has proved problematic where Plex series link to IMDB is inaccurate
-    mapping_id = int(series_id)
 
     # Build top-level Kometa metadata structure
-    show_block = {
-        "match": {"mapping_id": mapping_id},
-    }
-
+    show_block = {}
+    # Build show-level Kometa metadata structure
     if show_title:
         show_block["title"] = show_title
     if show_summary:
@@ -174,7 +175,16 @@ def fetch_series_data(tvdb, series_id, output_path, season_type="default", lang=
     # Now build the episide tree
     show_block["seasons"] = sorted_seasons
 
-    kometa_data = {"metadata": {show_title: show_block}}
+    # If IMDB is available, use that to match, in case Plex deprecates TVDB linking. Doing one or the other only
+    # has proved problematic where Plex series link to each ID is inconsistent, so we add BOTH as separate match blocks
+    # The yaml.dump is smart enough to not dupicate the entire season data and use a pointer.
+
+    mapping_id = imdb_id if imdb_id != "None" else ""
+
+    tvdb_block = {"tvdb_"+str(int(series_id)): { "match": {"mapping_id": int(series_id)}, } | show_block}
+    imdb_block = {"imdb_"+imdb_id: { "match": {"mapping_id": mapping_id}, } | show_block} if mapping_id else {}
+
+    kometa_data = {"metadata": tvdb_block | imdb_block}
 
     with open(output_path, "w", encoding="utf-8") as f:
         yaml.dump(
