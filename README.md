@@ -20,7 +20,8 @@ This should automate building a kometa metadata yaml file for each tv series fro
 It requires an API key, which you should be able to get as in independent developer.
 
 Requires a small addition to your Kometa config file:
-```TV Shows:
+```
+TV Shows:
   metadata_files:
     - folder: config/metadata/folder_you_will_set_in_shell_script
 ```
