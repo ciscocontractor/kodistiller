@@ -1,0 +1,4 @@
+#Ignore local use items from sync
+*.key
+*.yml
+*.log
