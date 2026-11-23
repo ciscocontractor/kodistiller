@@ -41,13 +41,12 @@ I tried to make the shell script POSIX and not require GNU extensions, YMMV.
 Yes, I had AI help with a lot of the python, as I'd never interacted with TVDB API directly.
 there is at least one package you'll need to install, see first line of that code.
 
-It currently pulls series, season, and episode titles, summary, and first air date, ~~but NOT for season because it made the looping harder,~~*
-series content rating, and episode thumbnails. No series and season thumbs because it returns an array of all available art.
+It currently pulls series, season, and episode titles, summaries, and first air date, 
+series content rating, and episode thumbnails. No episode rating, because it isn't in the same data table. No series and season images because it returns an array of all available art.
 This is probably an area where personal preference makes manually picking artwork preferred anyway, and a one time task.
-*Adding: Figured out how to update the season titles and summary.
 
-If you change the language variable in the python script, it will prefer localized series title and summary, but not episodes yet.
+If you change the language variable in the python script, it will prefer localized series, season, and episode titles and summaries, if a translation is available.
 
 It will add a Plex label like "tvdb-dvd" to make it easy to find which shows have non-plex-managed metadata from inside the Plex UI.
 
-As I'm not certain how Plex will handle TVDB IDs in the future, the import data will match a series on it's IMDB ID if it exists, ~~and fallback to match on the TVDB ID otherwise~~*. I don't believe Kometa has support TMDB IDs for television.  *Now it processes the data twice using both TVDB and IMDB IDs if they exist.
+As I'm not certain how Plex will handle TVDB IDs in the future, the import data will match a series on it's IMDB ID if it exists, plus on the TVDB ID, by importing the data twice. I don't believe Kometa has support TMDB IDs for television.  
