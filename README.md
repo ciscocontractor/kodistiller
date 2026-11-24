@@ -65,7 +65,7 @@ To apply to ONLY to the default edition without a tag, use special keyword "none
 `Pokemon (1997) {tvdb-76703} {tvdborder-official none}`\
 To Apply to ALL editions, use only one or no ordering tag as before:\
 `Pokemon (1997) {tvdb-76703} {tvdborder-official}`\
-`Pokemon (1997) {tvdb-76703}`\
+`Pokemon (1997) {tvdb-76703}`
 
 Run from command line directly, it requires three arguments:
 - python buildtvdbyaml.py 76703 official none\
