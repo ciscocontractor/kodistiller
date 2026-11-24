@@ -185,10 +185,12 @@ def fetch_series_data(tvdb, series_id, output_path, season_type="default", lang=
     # has proved problematic where Plex series link to each ID is inconsistent, so we add BOTH as separate match blocks
     # The yaml.dump is smart enough to not dupicate the entire season data and use a pointer.
 
-    mapping_id = imdb_id if imdb_id != "None" else ""
+    # double importing using IMDB ID probably isn't required, now that we know it works, let's disable until needed
+    imdb_id = ""
+    #imdb_id = imdb_id if imdb_id != "None" else ""
 
     tvdb_block = {"tvdb_"+str(int(series_id)): { "match": {"mapping_id": int(series_id)}, } | show_block}
-    imdb_block = {"imdb_"+imdb_id: { "match": {"mapping_id": mapping_id}, } | show_block} if mapping_id else {}
+    imdb_block = {"imdb_"+imdb_id: { "match": {"mapping_id": imdb_id}, } | show_block} if imdb_id else {}
 
     kometa_data = {"metadata": tvdb_block | imdb_block}
 
