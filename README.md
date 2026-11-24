@@ -67,8 +67,10 @@ To Apply to ALL editions, use only one or no ordering tag as before:\
 `Pokemon (1997) {tvdb-76703} {tvdborder-official}`\
 `Pokemon (1997) {tvdb-76703}`\
 
-Run from command line directly, it requires three arguments:
-- python buildtvdbyaml.py 76703 official none
-Otherwise with two or one command line arguments, it still applies to all editions or split versions:
-- python buildtvdbyaml.py 76703 official 
-- python buildtvdbyaml.py 76703
+Run from command line directly, it requires three arguments:\
+- python buildtvdbyaml.py 76703 official none\
+Otherwise with two or one command line arguments, it still applies to all editions or split versions:\
+- python buildtvdbyaml.py 76703 official\
+- python buildtvdbyaml.py 76703\
+
+
