@@ -55,5 +55,20 @@ As I'm not certain how Plex will handle TVDB IDs in the future, the import data 
 # Known issues
 1. Applies to all episodes of all editions or split series.
    Ex: Pokemon (Aired in JP) and Pokemon (US Dub)
-   Even if both have different {tvdborder-XX} tags, it processes only one, applied to both.
-   Possibly can map on the {edition-YY} tag, but that is Plex Pass only.
+
+Even if both have different {tvdborder-XX} tags, it processes only one, applied to both.
+Workaround (ver 2026-11-24 ++) requires using editions, sorry, I don't see any other way.
+
+To apply ONLY to Pokemon series with an edition tag, you must also specify the API order plus the edition tag, example using directory name:
+`Pokemon (1997) {tvdb-76703} {edition-Japanese} {tvdborder-regional Japanese}`
+To apply to ONLY to the default edition without a tag, use special keyword "none" as:
+`Pokemon (1997) {tvdb-76703} {tvdborder-official none}`
+To Apply to ALL editions, use only one or no ordering tag as before:
+`Pokemon (1997) {tvdb-76703} {tvdborder-official}`
+`Pokemon (1997) {tvdb-76703}`
+
+Run from command line directly, it requires three arguments:
+- python buildtvdbyaml.py 76703 official none
+Otherwise with two or one command line arguments, it still applies to all editions or split versions:
+- python buildtvdbyaml.py 76703 official 
+- python buildtvdbyaml.py 76703
