@@ -54,4 +54,6 @@ As I'm not certain how Plex will handle TVDB IDs in the future, the import data 
 
 # Known issues
 1. Applies to all episodes of all editions or split series.
-   Ex: Pokemon Official/Default (Aired in JP) and Pokemon Regional (US Dub)
+   Ex: Pokemon (Aired in JP) and Pokemon (US Dub)
+   Even if both have different {tvdborder-XX} tags, it processes only one, applied to both.
+   Possibly can map on the {edition-YY} tag, but that is Plex Pass only.
