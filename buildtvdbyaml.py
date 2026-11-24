@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-### Ver 2026-11-23
+### ver 2026-11-24
 
 ### Be sure to install tvdb-v4 python Package
 #python -m pip install tvdb_v4_official
@@ -20,6 +20,7 @@ TVDB_PIN = None  # Set to your subscriber PIN string if required by your project
 
 SERIES_ID = sys.argv[1] if len(sys.argv) > 1 else "121361"  # Example: Game of Thrones
 SEASON_TYPE = sys.argv[2] if len(sys.argv) > 2 else "default"
+EDITION_TYPE = sys.argv[3] if len(sys.argv) > 3 else ""
 #Some order options: "default" (Aired), "official", "dvd", "absolute", "alternate" (Streaming), "regional", and "altdvd"
 LANGUAGE = "eng"  # 3-letter ISO 639-2 code (e.g., "eng", "spa", "fra", "jpn")
 COUNTRY = "usa"  # 3-letter ISO code, for finding content ratings
@@ -188,8 +189,11 @@ def fetch_series_data(tvdb, series_id, output_path, season_type="default", lang=
     # double importing using IMDB ID probably isn't required, now that we know it works, let's disable until needed
     imdb_id = ""
 
-    tvdb_block = {"tvdb_"+str(int(series_id)): { "match": {"mapping_id": int(series_id)}, } | show_block}
-    imdb_block = {"imdb_"+imdb_id: { "match": {"mapping_id": imdb_id}, } | show_block} if imdb_id else {}
+    mapping_id = { "edition_contains": EDITION_TYPE } if EDITION_TYPE else {}
+    mapping_id = { "blank_edition": "true" } if EDITION_TYPE == "none" else mapping_id
+    #print(f"map edition: {mapping_id}") ## DEBUG
+    tvdb_block = {"tvdb_"+str(int(series_id)): { "match": {"mapping_id": int(series_id)} | mapping_id } | show_block}
+    imdb_block = {"imdb_"+imdb_id: { "match": {"mapping_id": imdb_id} | mapping_id } | show_block} if imdb_id else {}
 
     kometa_data = {"metadata": tvdb_block | imdb_block}
 
@@ -216,4 +220,3 @@ if __name__ == "__main__":
     )
 
     print(f"Successfully generated {OUTPUT_FILE} for '{show_title}'.")
-
