@@ -42,14 +42,14 @@ def fetch_series_data(tvdb, series_id, output_path, season_type="default", lang=
     remote_ids = series.get("remoteIds", [])
     tmdb_id = next(
         (item["id"] for item in remote_ids if item.get("sourceName") == "TheMovieDB.com"),
-        None
+        ""
     )
-    print(f"TMDB ID: {tmdb_id}")  # DEBUG
+    print(f"TMDB ID: {tmdb_id}") if tmdb_id else None  # DEBUG
     imdb_id = next(
         (item["id"] for item in remote_ids if item.get("sourceName") == "IMDB"),
-        None
+        ""
     )
-    print(f"IMDB ID: {imdb_id}")  # DEBUG
+    print(f"IMDB ID: {imdb_id}") if imdb_id else None  # DEBUG
 
     # if the native language of the series is not ours, look for translations
     if show_language != lang:
@@ -187,7 +187,6 @@ def fetch_series_data(tvdb, series_id, output_path, season_type="default", lang=
 
     # double importing using IMDB ID probably isn't required, now that we know it works, let's disable until needed
     imdb_id = ""
-    #imdb_id = imdb_id if imdb_id != "None" else ""
 
     tvdb_block = {"tvdb_"+str(int(series_id)): { "match": {"mapping_id": int(series_id)}, } | show_block}
     imdb_block = {"imdb_"+imdb_id: { "match": {"mapping_id": imdb_id}, } | show_block} if imdb_id else {}
