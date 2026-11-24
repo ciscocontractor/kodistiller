@@ -192,8 +192,15 @@ def fetch_series_data(tvdb, series_id, output_path, season_type="default", lang=
     mapping_id = { "edition_contains": EDITION_TYPE } if EDITION_TYPE else {}
     mapping_id = { "blank_edition": "true" } if EDITION_TYPE == "none" else mapping_id
     #print(f"map edition: {mapping_id}") ## DEBUG
-    tvdb_block = {"tvdb_"+str(int(series_id)): { "match": {"mapping_id": int(series_id)} | mapping_id } | show_block}
-    imdb_block = {"imdb_"+imdb_id: { "match": {"mapping_id": imdb_id} | mapping_id } | show_block} if imdb_id else {}
+
+    tvdb_id = str(int(series_id))
+    tvdb_header = "tvdb_"+tvdb_id+"_"+EDITION_TYPE if EDITION_TYPE else "tvdb_"+tvdb_id
+    imdb_header = "imdb_"+imdb_id+"_"+EDITION_TYPE if EDITION_TYPE else "imdb_"+imdb_id
+    #print(f"tvdb header: {tvdb_header}")
+    #print(f"imdb header: {imdb_header}")
+
+    tvdb_block = {tvdb_header: { "match": {"mapping_id": tvdb_id} | mapping_id } | show_block}
+    imdb_block = {imdb_header: { "match": {"mapping_id": imdb_id} | mapping_id } | show_block} if imdb_id else {}
 
     kometa_data = {"metadata": tvdb_block | imdb_block}
 
