@@ -1,18 +1,19 @@
 #!/bin/sh
 
-### Ver 2026-11-23
+### Ver 2026-11-24
 
-#Set file path for your environment
 MEDIA_PATH='/media/television'
-CONFIG_PATH='/usr/local/share/kometa/config/metadata/tvdb/'
+CONFIG_PATH='/usr/local/share/kometa/config/metadata/Television/'
 
 cd "$CONFIG_PATH"
 
 
+#had to rework passing arguments with xargs because the number is now variable as two or three.
 find "$MEDIA_PATH" -name '*{tvdb-*' | awk '{ \
   if (match($0, /tvdb-[[:digit:]]+/)) {  printf  "%s ", substr($0, RSTART + 5, RLENGTH - 5) } \
-  if (match($0, /tvdborder-[[:alpha:]]+/)) { print substr($0, RSTART + 10, RLENGTH - 10) } else { print "default" } \
-}' | sort -u | tee serieslist.log | xargs -n 2 python buildtvdbyaml.py  | tee run.log
+  if (match($0, /tvdborder-[[:alnum:] ]+/)) { print substr($0, RSTART + 10, RLENGTH - 10) } else { print "default" } \
+}' | sort -u | tee serieslist.log | tr '\n' '\0' | xargs -0 -n 1 sh -c 'python buildtvdbyaml.py $1' _ | tee run.log
+
 
 
 exit
@@ -43,16 +44,38 @@ I tried to make it POSIX and not require GNU extensions, YMMV.
 Yes, I had AI help with a lot of the python, as I'd never interacted with TVDB API directly.
 there is at least one package you'll need to install, see first line of that code.
 
-It currently pulls series and episode titles, summary, and first air date, but NOT for season because it made the looping harder,
-series content rating, and episode thumbnails. No series and season thumbs because it returns an array of all available art.
+It currently pulls series, season and episode titles, summary, and first air date,
+series content rating, and episode thumbnails. No series and season images because it returns an array of all available art.
 This is probably an area where personal preference makes manually picking artwork preferred anyway.
 
-If you change the language variable in the python script, it will prefer localized series title and summary, but not episodes yet.
+If you change the language variable in the python script, it will prefer localized title and summary.
 
 It will add a label like "tvdb-dvd" to make it easy to find which shows have non-plex-managed metadata from inside the Plex UI.
 
-As I'm not certain how Plex will handle TVDB IDs in the future, the import data will match a series on the IMDB ID,
-if it exists, and fallback to match on the TVDB ID otherwise. I don't believe Kometa has support TMDB IDs for television.
+KNOWN ISSUE:
+
+Applies metadata to all episodes of all editions or split series.
+Ex: Pokemon (Aired in JP) and Pokemon (US Dub)
+
+Even if both have different {tvdborder-XX} tags, it processes only one, applied to both.
+Workaround (ver 2026-11-24 ++) requires using editions, sorry, I don't see any other way.
+
+To apply ONLY to Pokemon series with an edition tag, you must also specify the API order plus the edition tag, example using directory name:
+Pokemon (1997) {tvdb-76703} {edition-Japanese} {tvdborder-regional Japanese}
+
+To apply ONLY to the default edition without a tag, use special keyword "none" as:
+Pokemon (1997) {tvdb-76703} {tvdborder-official none}
+
+To Apply to ALL editions, use only one or no ordering tag as before:
+Pokemon (1997) {tvdb-76703} {tvdborder-official}
+Pokemon (1997) {tvdb-76703}
+
+Run from command line directly, it requires three arguments:
+python buildtvdbyaml.py 76703 regional Japanese
+python buildtvdbyaml.py 76703 official none
+
+Otherwise with two or one command line arguments, it still applies to all editions or split versions:
+python buildtvdbyaml.py 76703 official
+python buildtvdbyaml.py 76703
 
 'ENDCOMMENT'
-
