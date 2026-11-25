@@ -78,6 +78,11 @@ def fetch_series_data(tvdb, series_id, output_path, season_type="default", lang=
     for season in series_seasons:
         season_id = season["id"]
         s_num = season["number"]
+
+        #When overriding only the Speicals season 0, abort loop
+        if EDITION_TYPE == 'zero' and s_num > 0:
+            continue
+
         seasons_dict[s_num] = {"episodes": {}}
 
         # Base season name (often None if not set at the root level)
@@ -125,6 +130,10 @@ def fetch_series_data(tvdb, series_id, output_path, season_type="default", lang=
         s_num = ep.get("seasonNumber")
         e_num = ep.get("number")
         if s_num is None or e_num is None:
+            continue
+
+        #When overriding only the Speicals season 0, abort loop
+        if EDITION_TYPE == 'zero' and s_num > 0:
             continue
 
         #print(f"EN: {s_num}")  #DEBUG
@@ -191,6 +200,7 @@ def fetch_series_data(tvdb, series_id, output_path, season_type="default", lang=
 
     mapping_id = { "edition_contains": EDITION_TYPE } if EDITION_TYPE else {}
     mapping_id = { "blank_edition": "true" } if EDITION_TYPE == "none" else mapping_id
+    mapping_id = {} if EDITION_TYPE == "zero" else mapping_id
     #print(f"map edition: {mapping_id}") ## DEBUG
 
     tvdb_id = str(int(series_id))
