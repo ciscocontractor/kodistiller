@@ -199,7 +199,7 @@ def fetch_series_data(tvdb, series_id, output_path, season_type="default", lang=
     #print(f"tvdb header: {tvdb_header}")
     #print(f"imdb header: {imdb_header}")
 
-    tvdb_block = {tvdb_header: { "match": {"mapping_id": tvdb_id} | mapping_id } | show_block}
+    tvdb_block = {tvdb_header: { "match": {"mapping_id": int(tvdb_id)} | mapping_id } | show_block}
     imdb_block = {imdb_header: { "match": {"mapping_id": imdb_id} | mapping_id } | show_block} if imdb_id else {}
 
     kometa_data = {"metadata": tvdb_block | imdb_block}
