@@ -221,4 +221,4 @@ LICENSE & DISCLAIMER
 SEE ALSO
        awk(1), find(1), python(1), xargs(1)
 
-Version 2026-11-24             November 24, 2026                KODISTILLER(1)
+Version 2026-11-25             November 25, 2026                KODISTILLER(1)

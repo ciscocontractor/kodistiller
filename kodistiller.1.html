@@ -1,249 +1,288 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>KODISTILLER(1) - User Commands</title>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <style>
-    body {
-      font-family: "Liberation Mono", "DejaVu Sans Mono", Consolas, monospace;
-      line-height: 1.5;
-      max-width: 82ch;
-      margin: 2rem auto;
-      padding: 0 1.5rem;
-      color: #1a1a1a;
-      background-color: #ffffff;
-    }
-    header, footer {
-      display: flex;
-      justify-content: space-between;
-      font-weight: bold;
-      border-bottom: 1px solid #ccc;
-      padding-bottom: 0.4rem;
-      margin-bottom: 1.5rem;
-    }
-    footer {
-      border-bottom: none;
-      border-top: 1px solid #ccc;
-      padding-top: 0.4rem;
-      margin-top: 2rem;
-    }
-    h1 {
-      font-size: 1.05rem;
-      text-transform: uppercase;
-      margin: 1.6rem 0 0.5rem 0;
-      letter-spacing: 0.03em;
-    }
-    h2 {
-      font-size: 0.98rem;
-      margin: 1.1rem 0 0.4rem 1.5rem;
-    }
-    p, ul, pre, dl {
-      margin: 0.5rem 0 0.9rem 3rem;
-    }
-    dl dt {
-      font-weight: bold;
-      margin-top: 0.6rem;
-    }
-    dl dd {
-      margin-left: 2.5rem;
-      margin-bottom: 0.5rem;
-    }
-    dl dd dl {
-      margin-left: 0;
-    }
-    pre {
-      background: #f6f8fa;
-      padding: 0.75rem 1rem;
-      border-left: 3px solid #ccc;
-      overflow-x: auto;
-    }
-    code, var {
-      font-family: inherit;
-    }
-    var {
-      font-style: italic;
-    }
-    @media (prefers-color-scheme: dark) {
-      body {
-        background-color: #121212;
-        color: #e4e4e4;
-      }
-      header, footer {
-        border-color: #333;
-      }
-      pre {
-        background: #1e1e1e;
-        border-left-color: #444;
-      }
-    }
+    table.head, table.foot { width: 100%; }
+    td.head-rtitle, td.foot-os { text-align: right; }
+    td.head-vol { text-align: center; }
+    .Nd, .Bf, .Op { display: inline; }
+    .Pa, .Ad { font-style: italic; }
+    .Ms { font-weight: bold; }
+    .Bl-diag > dt { font-weight: bold; }
+    code.Nm, .Fl, .Cm, .Ic, code.In, .Fd, .Fn, .Cd { font-weight: bold;
+      font-family: inherit; }
   </style>
+  <title>KODISTILLER(1)</title>
 </head>
 <body>
-
-<header>
-  <span>KODISTILLER(1)</span>
-  <span>User Commands</span>
-  <span>KODISTILLER(1)</span>
-</header>
-
-<main>
-  <section id="NAME">
-    <h1>NAME</h1>
-    <p><strong>kodistiller</strong> &ndash; extract TVDB television series data for Kometa for import to Plex</p>
-  </section>
-
-  <section id="SYNOPSIS">
-    <h1>SYNOPSIS</h1>
-    <p>
-      <strong>buildtvdbyaml.sh</strong><br>
-      <strong>python buildtvdbyaml.py</strong> [<var>series_id</var> [<var>season_type</var> [<var>edition_type</var>]]]
-    </p>
-  </section>
-
-  <section id="DESCRIPTION">
-    <h1>DESCRIPTION</h1>
-    <p>
-      <strong>kodistiller</strong> extracts television series metadata from The TVDB v4 API and generates YAML metadata files formatted for Kometa to import directly into a Plex database. It consists of a POSIX-compliant shell wrapper (<strong>buildtvdbyaml.sh</strong>) that scans media directories for tagged series folders, and a Python generator (<strong>buildtvdbyaml.py</strong>) that queries the API and writes per-series YAML output files.
-    </p>
-    <p>
-      Because Plex ends data access contracts with The TVDB in December 2026, <strong>kodistiller</strong> provides an automated workaround for series whose metadata or episode ordering from alternative sources is incomplete or inaccurate, without requiring local NFO/JPG sidecar files or modifying embedded media tags.
-    </p>
-    <p>
-      <strong>kodistiller</strong> retrieves series, season, and episode titles, summaries, first air dates, series content ratings, and episode thumbnails. It does <em>not</em> populate genres, actors, studios, collections, episode ratings, or series and season posters/artwork. Users should generally add new shows using TMDB metadata first to fetch missing artwork and credits, and apply <strong>kodistiller</strong> where episode ordering or metadata requires TVDB data.
-    </p>
-    <p>
-      Note that Kometa cannot alter the episode ordering flag inside Plex for a library or series; changing the episode order setting in Plex remains a manual step.
-    </p>
-  </section>
-
-  <section id="OPTIONS">
-    <h1>OPTIONS &amp; ARGUMENTS</h1>
-    <p>
-      <strong>buildtvdbyaml.sh</strong> takes no command-line flags; it is configured by editing variables at the top of the script and scanning folder tags in <var>MEDIA_PATH</var>.
-    </p>
-    <p><strong>buildtvdbyaml.py</strong> accepts up to three positional arguments:</p>
-    <dl>
-      <dt><var>series_id</var></dt>
-      <dd>Numeric TVDB series ID (defaults to <strong>121361</strong> if omitted).</dd>
-
-      <dt><var>season_type</var></dt>
-      <dd>
-        The TVDB API ordering string (defaults to <strong>default</strong>). Common values include:
-        <dl>
-          <dt>default</dt>
-          <dd>Aired order (maps to <strong>official</strong> for season lookups).</dd>
-          <dt>official</dt>
-          <dd>Official aired order.</dd>
-          <dt>dvd</dt>
-          <dd>DVD release order.</dd>
-          <dt>absolute</dt>
-          <dd>Absolute episode numbering order.</dd>
-          <dt>alternate</dt>
-          <dd>Streaming or alternate order.</dd>
-          <dt>regional</dt>
-          <dd>Regional release order.</dd>
-          <dt>altdvd</dt>
-          <dd>Alternate DVD order.</dd>
-        </dl>
-      </dd>
-
-      <dt><var>edition_type</var></dt>
-      <dd>
-        Optional Plex edition filter used to restrict metadata matching to a specific edition (for split or multi-edition series).
-        <dl>
-          <dt><var>&lt;edition_name&gt;</var></dt>
-          <dd>Matches only Plex items whose edition contains <var>&lt;edition_name&gt;</var> (generates <strong>edition_contains</strong>).</dd>
-          <dt>none</dt>
-          <dd>Matches only the default edition lacking an edition tag (generates <strong>blank_edition: "true"</strong>).</dd>
-          <dt><var>(omitted)</var></dt>
-          <dd>Applies metadata across all editions and split versions of the series.</dd>
-        </dl>
-      </dd>
-    </dl>
-  </section>
-
-  <section id="DIRECTORY_TAGGING">
-    <h1>DIRECTORY TAGGING</h1>
-    <p>When running <strong>buildtvdbyaml.sh</strong>, series directories under <var>MEDIA_PATH</var> are parsed using curly-brace tags in the directory name:</p>
-    <dl>
-      <dt><strong>{tvdb-</strong><var>digits</var><strong>}</strong></dt>
-      <dd>Required. Specifies the numeric TVDB series ID.</dd>
-
-      <dt><strong>{tvdborder-</strong><var>order</var><strong>}</strong></dt>
-      <dd>Optional. Specifies the TVDB API season ordering string (defaults to <strong>default</strong> if omitted).</dd>
-
-      <dt><strong>{tvdborder-</strong><var>order edition</var><strong>}</strong></dt>
-      <dd>Optional. Specifies both the TVDB API season ordering string and an edition filter separated by a space. Use <strong>none</strong> as the edition keyword to target only untagged default editions.</dd>
-    </dl>
-  </section>
-
-  <section id="CONFIGURATION">
-    <h1>CONFIGURATION</h1>
-
-    <h2>Shell Script (buildtvdbyaml.sh)</h2>
-    <p>Edit the path variables at the top of <strong>buildtvdbyaml.sh</strong>:</p>
-    <dl>
-      <dt>MEDIA_PATH</dt>
-      <dd>Root directory of your television library (default: <code>/media/television</code>).</dd>
-
-      <dt>CONFIG_PATH</dt>
-      <dd>Target Kometa metadata directory where generated YAML files and logs are written (default: <code>/usr/local/share/kometa/config/metadata/Television/</code>).</dd>
-    </dl>
-
-    <h2>Python Script (buildtvdbyaml.py)</h2>
-    <p>Customize the configuration block at the top of <strong>buildtvdbyaml.py</strong>:</p>
-    <dl>
-      <dt>TVDB_API_KEY</dt>
-      <dd>Your TVDB v4 API key. Read automatically from <code>api.key</code> in the working directory if present, otherwise set directly in the script. Never share your API key publicly.</dd>
-
-      <dt>TVDB_PIN</dt>
-      <dd>Subscriber PIN string if required by your TVDB API key (default: <code>None</code>).</dd>
-
-      <dt>LANGUAGE</dt>
-      <dd>3-letter ISO 639-2 language code used to fetch localized series, season, and episode titles and summaries when available (default: <code>eng</code>).</dd>
-
-      <dt>COUNTRY</dt>
-      <dd>3-letter ISO country code used to select series content ratings (default: <code>usa</code>).</dd>
-    </dl>
-
-    <h2>Kometa Configuration</h2>
-    <p>Add the output directory to your Kometa configuration file under your TV library:</p>
-    <pre>TV Shows:
+<div class="head" role="doc-pageheader" aria-label="Manual header
+  line"><span class="head-ltitle">KODISTILLER(1)</span>
+  <span class="head-vol">User Commands</span>
+  <span class="head-rtitle">KODISTILLER(1)</span></div>
+<main class="manual-text">
+<section class="Sh">
+<h2 class="Sh" id="NAME"><a class="permalink" href="#NAME">NAME</a></h2>
+<p class="Pp">kodistiller - extract TVDB television series data for Kometa for
+    import to Plex</p>
+</section>
+<section class="Sh">
+<h2 class="Sh" id="SYNOPSIS"><a class="permalink" href="#SYNOPSIS">SYNOPSIS</a></h2>
+<p class="Pp"><b>buildtvdbyaml.sh</b>
+  <br/>
+  <b>python buildtvdbyaml.py</b> [<i>series_id</i> [<i>season_type</i>
+    [<i>edition_type</i>]]]</p>
+</section>
+<section class="Sh">
+<h2 class="Sh" id="DESCRIPTION"><a class="permalink" href="#DESCRIPTION">DESCRIPTION</a></h2>
+<p class="Pp"><b>kodistiller</b> extracts television series metadata from The
+    TVDB v4 API and generates YAML metadata files formatted for Kometa to import
+    directly into a Plex database. It consists of a POSIX-compliant shell
+    wrapper (<b>buildtvdbyaml.sh</b>) that scans media directories for tagged
+    series folders, and a Python generator (<b>buildtvdbyaml.py</b>) that
+    queries the API and writes per-series YAML output files.</p>
+<p class="Pp">Because Plex ends data access contracts with The TVDB in December
+    2026, <b>kodistiller</b> provides an automated workaround for series whose
+    metadata or episode ordering from alternative sources is incomplete or
+    inaccurate, without requiring local NFO/JPG sidecar files or modifying
+    embedded media tags.</p>
+<p class="Pp"><b>kodistiller</b> retrieves series, season, and episode titles,
+    summaries, first air dates, series content ratings, and episode thumbnails.
+    It does <i>not</i> populate genres, actors, studios, collections, episode
+    ratings, or series and season posters/artwork. Users should generally add
+    new shows using TMDB metadata first to fetch missing artwork and credits,
+    and apply <b>kodistiller</b> where episode ordering or metadata requires
+    TVDB data.</p>
+<p class="Pp">Note that Kometa cannot alter the episode ordering flag inside
+    Plex for a library or series; changing the episode order setting in Plex
+    remains a manual step.</p>
+</section>
+<section class="Sh">
+<h2 class="Sh" id="OPTIONS_&amp;_ARGUMENTS"><a class="permalink" href="#OPTIONS_&amp;_ARGUMENTS">OPTIONS
+  &amp; ARGUMENTS</a></h2>
+<p class="Pp"><b>buildtvdbyaml.sh</b> takes no command-line flags; it is
+    configured by editing variables at the top of the script and scanning folder
+    tags in <i>MEDIA_PATH</i>.</p>
+<p class="Pp"><b>buildtvdbyaml.py</b> accepts up to three positional
+  arguments:</p>
+<dl class="Bl-tag">
+  <dt id="series_id"><a class="permalink" href="#series_id"><i>series_id</i></a></dt>
+  <dd>Numeric TVDB series ID (defaults to <b>121361</b> if omitted).</dd>
+  <dt id="season_type"><a class="permalink" href="#season_type"><i>season_type</i></a></dt>
+  <dd>The TVDB API ordering string (defaults to <b>default</b>). Common values
+      include:</dd>
+</dl>
+<div class="Bd-indent">
+<dl class="Bl-tag">
+  <dt id="default"><a class="permalink" href="#default"><b>default</b></a></dt>
+  <dd>Aired order (maps to <b>official</b> for season lookups).</dd>
+  <dt id="official"><a class="permalink" href="#official"><b>official</b></a></dt>
+  <dd>Official aired order.</dd>
+  <dt id="dvd"><a class="permalink" href="#dvd"><b>dvd</b></a></dt>
+  <dd>DVD release order.</dd>
+  <dt id="absolute"><a class="permalink" href="#absolute"><b>absolute</b></a></dt>
+  <dd>Absolute episode numbering order.</dd>
+  <dt id="alternate"><a class="permalink" href="#alternate"><b>alternate</b></a></dt>
+  <dd>Streaming or alternate order.</dd>
+  <dt id="regional"><a class="permalink" href="#regional"><b>regional</b></a></dt>
+  <dd>Regional release order.</dd>
+  <dt id="altdvd"><a class="permalink" href="#altdvd"><b>altdvd</b></a></dt>
+  <dd>Alternate DVD order.</dd>
+</dl>
+</div>
+<dl class="Bl-tag">
+  <dt id="edition_type"><a class="permalink" href="#edition_type"><i>edition_type</i></a></dt>
+  <dd>Optional Plex edition filter used to restrict metadata matching to a
+      specific edition (for split or multi-edition series).</dd>
+</dl>
+<div class="Bd-indent">
+<dl class="Bl-tag">
+  <dt><i>&lt;edition_name&gt;</i></dt>
+  <dd>Matches only Plex items whose edition contains <i>&lt;edition_name&gt;</i>
+      (generates <b>edition_contains</b>).</dd>
+  <dt id="none"><a class="permalink" href="#none"><b>none</b></a></dt>
+  <dd>Matches only the default edition lacking an edition tag (generates
+      <b>blank_edition: &quot;true&quot;</b>).</dd>
+  <dt><i>(omitted)</i></dt>
+  <dd>Applies metadata across all editions and split versions of the
+    series.</dd>
+</dl>
+</div>
+</section>
+<section class="Sh">
+<h2 class="Sh" id="DIRECTORY_TAGGING"><a class="permalink" href="#DIRECTORY_TAGGING">DIRECTORY
+  TAGGING</a></h2>
+<p class="Pp">When running <b>buildtvdbyaml.sh</b>, series directories under
+    <i>MEDIA_PATH</i> are parsed using curly-brace tags in the directory
+  name:</p>
+<dl class="Bl-tag">
+  <dt><b>{tvdb-</b><i>digits</i><b>}</b></dt>
+  <dd>Required. Specifies the numeric TVDB series ID.</dd>
+  <dt><b>{tvdborder-</b><i>order</i><b>}</b></dt>
+  <dd>Optional. Specifies the TVDB API season ordering string (defaults to
+      <b>default</b> if omitted).</dd>
+  <dt><b>{tvdborder-</b><i>order edition</i><b>}</b></dt>
+  <dd>Optional. Specifies both the TVDB API season ordering string and an
+      edition filter separated by a space. Use <b>none</b> as the edition
+      keyword to target only untagged default editions.</dd>
+</dl>
+</section>
+<section class="Sh">
+<h2 class="Sh" id="CONFIGURATION"><a class="permalink" href="#CONFIGURATION">CONFIGURATION</a></h2>
+<section class="Ss">
+<h3 class="Ss" id="Shell_Script_(buildtvdbyaml.sh)"><a class="permalink" href="#Shell_Script_(buildtvdbyaml.sh)">Shell
+  Script (buildtvdbyaml.sh)</a></h3>
+<p class="Pp">Edit the path variables at the top of <b>buildtvdbyaml.sh</b>:</p>
+<dl class="Bl-tag">
+  <dt id="MEDIA_PATH"><a class="permalink" href="#MEDIA_PATH"><b>MEDIA_PATH</b></a></dt>
+  <dd>Root directory of your television library (default:
+      <i>/media/television</i>).</dd>
+  <dt id="CONFIG_PATH"><a class="permalink" href="#CONFIG_PATH"><b>CONFIG_PATH</b></a></dt>
+  <dd>Target Kometa metadata directory where generated YAML files and logs are
+      written (default:
+      <i>/usr/local/share/kometa/config/metadata/Television/</i>).</dd>
+</dl>
+</section>
+<section class="Ss">
+<h3 class="Ss" id="Python_Script_(buildtvdbyaml.py)"><a class="permalink" href="#Python_Script_(buildtvdbyaml.py)">Python
+  Script (buildtvdbyaml.py)</a></h3>
+<p class="Pp">Customize the configuration block at the top of
+    <b>buildtvdbyaml.py</b>:</p>
+<dl class="Bl-tag">
+  <dt id="TVDB_API_KEY"><a class="permalink" href="#TVDB_API_KEY"><b>TVDB_API_KEY</b></a></dt>
+  <dd>Your TVDB v4 API key. Read automatically from <i>api.key</i> in the
+      working directory if present, otherwise set directly in the script. Never
+      share your API key publicly.</dd>
+  <dt id="TVDB_PIN"><a class="permalink" href="#TVDB_PIN"><b>TVDB_PIN</b></a></dt>
+  <dd>Subscriber PIN string if required by your TVDB API key (default:
+      <b>None</b>).</dd>
+  <dt id="LANGUAGE"><a class="permalink" href="#LANGUAGE"><b>LANGUAGE</b></a></dt>
+  <dd>3-letter ISO 639-2 language code used to fetch localized series, season,
+      and episode titles and summaries when available (default:
+    <b>eng</b>).</dd>
+  <dt id="COUNTRY"><a class="permalink" href="#COUNTRY"><b>COUNTRY</b></a></dt>
+  <dd>3-letter ISO country code used to select series content ratings (default:
+      <b>usa</b>).</dd>
+</dl>
+</section>
+<section class="Ss">
+<h3 class="Ss" id="Kometa_Configuration"><a class="permalink" href="#Kometa_Configuration">Kometa
+  Configuration</a></h3>
+<p class="Pp">Add the output directory to your Kometa configuration file under
+    your TV library:</p>
+<p class="Pp"></p>
+<div class="Bd-indent">
+<pre>TV Shows:
+<br/>
   metadata_files:
+<br/>
     - folder: config/metadata/Television</pre>
-  </section>
-
-  <section id="FILES">
-    <h1>FILES</h1>
-    <dl>
-      <dt><code>./api.key</code></dt>
-      <dd>Optional plain-text file containing your TVDB v4 API key.</dd>
-
-      <dt><code>tvdb_&lt;SERIES_ID&gt;&lt;EDITION&gt;_metadata.yml</code></dt>
-      <dd>Generated Kometa metadata file written per series in the current working directory. Each series is tagged with a Plex label formatted as <strong>tvdb-</strong><var>&lt;season_type&gt;</var> (for example, <strong>tvdb-dvd</strong>) to identify TVDB-managed shows in the Plex UI.</dd>
-
-      <dt><code>serieslist.log</code></dt>
-      <dd>Deduplicated list of parsed series IDs, orders, and editions generated by <strong>buildtvdbyaml.sh</strong>.</dd>
-
-      <dt><code>run.log</code></dt>
-      <dd>Execution output log generated by <strong>buildtvdbyaml.sh</strong>.</dd>
-    </dl>
-  </section>
-
-  <section id="REQUIREMENTS">
-    <h1>REQUIREMENTS</h1>
-    <ul>
-      <li>A Unix-like operating system (POSIX <code>sh</code>, <code>awk</code>, <code>find</code>, <code>sort</code>, <code>tr</code>, <code>xargs</code>). Windows compatibility is untested (may require Cygwin).</li>
-      <li>Python 3 with <strong>tvdb_v4_official</strong> and <strong>PyYAML</strong> installed (<code>python -m pip install tvdb_v4_official PyYAML</code>).</li>
-      <li>A working Kometa installation and a TVDB v4 developer API key.</li>
-    </ul>
-  </section>
-
-  <section id="EXAMPLES">
-    <h1>EXAMPLES</h1>
-    <dl>
-      <dt>Scan all tagged folders in <var>MEDIA_PATH</var> and generate YAML files:</dt>
-      <dd><code>./buildtvdbyaml.sh</code></dd>
-
-      <dt>Directory naming for DVD order:</dt>
+</div>
+</section>
+</section>
+<section class="Sh">
+<h2 class="Sh" id="FILES"><a class="permalink" href="#FILES">FILES</a></h2>
+<dl class="Bl-tag">
+  <dt><i>./api.key</i></dt>
+  <dd>Optional plain-text file containing your TVDB v4 API key.</dd>
+  <dt id="tvdb__SERIES_ID__EDITION__metadata.yml"><a class="permalink" href="#tvdb__SERIES_ID__EDITION__metadata.yml"><i>tvdb_&lt;SERIES_ID&gt;&lt;EDITION&gt;_metadata.yml</i></a></dt>
+  <dd>Generated Kometa metadata file written per series in the current working
+      directory. Each series is tagged with a Plex label formatted as
+      <b>tvdb-</b><i>&lt;season_type&gt;</i> (for example, <b>tvdb-dvd</b>) to
+      identify TVDB-managed shows in the Plex UI.</dd>
+  <dt id="serieslist.log"><a class="permalink" href="#serieslist.log"><i>serieslist.log</i></a></dt>
+  <dd>Deduplicated list of parsed series IDs, orders, and editions generated by
+      <b>buildtvdbyaml.sh</b>.</dd>
+  <dt id="run.log"><a class="permalink" href="#run.log"><i>run.log</i></a></dt>
+  <dd>Execution output log generated by <b>buildtvdbyaml.sh</b>.</dd>
+</dl>
+</section>
+<section class="Sh">
+<h2 class="Sh" id="REQUIREMENTS"><a class="permalink" href="#REQUIREMENTS">REQUIREMENTS</a></h2>
+<ul class="Bl-bullet">
+  <li>A Unix-like operating system (POSIX <b>sh</b>, <b>awk</b>, <b>find</b>,
+      <b>sort</b>, <b>tr</b>,
+      <b>xargs</b>).<b>Windows</b>compatibility<b>is</b>untested<b>(may</b>require<b>Cygwin).</b></li>
+  <li>Python 3 with <b>tvdb_v4_official</b> and <b>PyYAML</b> installed
+      (<b>python -m pip install tvdb_v4_official PyYAML</b>).</li>
+  <li>A working Kometa installation and a TVDB v4 developer API key.</li>
+</ul>
+</section>
+<section class="Sh">
+<h2 class="Sh" id="EXAMPLES"><a class="permalink" href="#EXAMPLES">EXAMPLES</a></h2>
+<dl class="Bl-tag">
+  <dt id="Scan"><a class="permalink" href="#Scan">Scan all tagged folders in
+    <i>MEDIA_PATH</i> and generate YAML files:</a></dt>
+  <dd><b>./buildtvdbyaml.sh</b></dd>
+  <dt id="Directory"><a class="permalink" href="#Directory">Directory naming for
+    DVD order:</a></dt>
+  <dd><i>/media/television/Firefly (2002) {tvdb-78874} {tvdborder-dvd}</i></dd>
+  <dt id="Directory~2"><a class="permalink" href="#Directory~2">Directory naming
+    targeting only a specific Plex edition:</a></dt>
+  <dd><i>/media/television/Pokemon (1997) {tvdb-76703} {edition-Japanese}
+      {tvdborder-regional Japanese}</i></dd>
+  <dt id="Directory~3"><a class="permalink" href="#Directory~3">Directory naming
+    targeting only the untagged default edition:</a></dt>
+  <dd><i>/media/television/Pokemon (1997) {tvdb-76703} {tvdborder-official
+      none}</i></dd>
+  <dt id="Run"><a class="permalink" href="#Run">Run manually from the command
+    line for a single series (default aired order, all editions):</a></dt>
+  <dd><b>python buildtvdbyaml.py 76703</b></dd>
+  <dt id="Run~2"><a class="permalink" href="#Run~2">Run manually with a specific
+    order across all editions:</a></dt>
+  <dd><b>python buildtvdbyaml.py 78874 dvd</b></dd>
+  <dt id="Run~3"><a class="permalink" href="#Run~3">Run manually for a specific
+    order and Plex edition:</a></dt>
+  <dd><b>python buildtvdbyaml.py 76703 regional Japanese</b></dd>
+  <dt id="Run~4"><a class="permalink" href="#Run~4">Run manually for a specific
+    order on the untagged default edition only:</a></dt>
+  <dd><b>python buildtvdbyaml.py 76703 official none</b></dd>
+</dl>
+</section>
+<section class="Sh">
+<h2 class="Sh" id="KNOWN_ISSUES_&amp;_LIMITATIONS"><a class="permalink" href="#KNOWN_ISSUES_&amp;_LIMITATIONS">KNOWN
+  ISSUES &amp; LIMITATIONS</a></h2>
+<dl class="Bl-tag">
+  <dt id="Split"><a class="permalink" href="#Split"><b>Split or Multi-Edition
+    Series Collisions</b></a></dt>
+  <dd>By default, generated YAML files match on TVDB ID across all editions or
+      split entries of a show (for example, <i>Pokemon (Aired in JP)</i> and
+      <i>Pokemon (US Dub)</i>). If two folders share the same TVDB ID with
+      different <b>{tvdborder-}</b> tags without edition specifiers, one
+      ordering overwrites or applies to both. Use Plex <b>{edition-}</b> tags
+      paired with <b>{tvdborder-&lt;order&gt; &lt;edition&gt;}</b> (or
+      <b>none</b>) to isolate metadata per edition.</dd>
+  <dt id="Partial"><a class="permalink" href="#Partial"><b>Partial Metadata
+    Scope</b></a></dt>
+  <dd>Episode ratings, cast/crew, genres, studios, collections, and
+      series/season posters are not imported.</dd>
+  <dt id="Disabled"><a class="permalink" href="#Disabled"><b>Disabled Dual-ID
+    Matching</b></a></dt>
+  <dd>IMDB ID matching code is present in <b>buildtvdbyaml.py</b> as a fallback
+      hedge against future Plex TVDB deprecations, but is currently disabled by
+      default.</dd>
+</dl>
+</section>
+<section class="Sh">
+<h2 class="Sh" id="LICENSE_&amp;_DISCLAIMER"><a class="permalink" href="#LICENSE_&amp;_DISCLAIMER">LICENSE
+  &amp; DISCLAIMER</a></h2>
+<p class="Pp">Released into the public domain without warranty or terms of use.
+    Provided as-is with no guarantee of usability, fitness, or long-term
+    maintenance.</p>
+<p class="Pp"><b>AI Content Disclosure:</b> Portions of the Python codebase and
+    documentation were created with AI assistance.</p>
+</section>
+<section class="Sh">
+<h2 class="Sh" id="SEE_ALSO"><a class="permalink" href="#SEE_ALSO">SEE
+  ALSO</a></h2>
+<p class="Pp"><b>awk</b>(1), <b>find</b>(1), <b>python</b>(1),
+  <b>xargs</b>(1)</p>
+</section>
+</main>
+<div class="foot" role="doc-pagefooter" aria-label="Manual footer
+  line"><span class="foot-left">Version 2026-11-25</span>
+  <span class="foot-date">November 25, 2026</span>
+  <span class="foot-right">KODISTILLER(1)</span></div>
+</body>
+</html>

@@ -75,3 +75,5 @@ man ./kodistiller.1
 ```
 
 *(Or view `kodistiller.txt` / `kodistiller.1.html` in this repository.)*
+
+2026-11-25

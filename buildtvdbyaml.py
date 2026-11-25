@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-### ver 2026-11-24
+### ver 2026-11-25
 
 ### Be sure to install tvdb-v4 python Package
 #python -m pip install tvdb_v4_official

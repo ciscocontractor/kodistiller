@@ -1,6 +1,6 @@
 #!/bin/sh
 
-### Ver 2026-11-24
+### Ver 2026-11-25
 
 MEDIA_PATH='/media/television'
 CONFIG_PATH='/usr/local/share/kometa/config/metadata/Television/'
