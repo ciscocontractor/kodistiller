@@ -61,7 +61,7 @@ Even if both have different {tvdborder-XX} tags, it processes only one, applied 
 Workaround (ver 2026-11-24 ++) requires using editions, sorry, I don't see any other way.
 
 To apply ONLY to Pokemon series with an edition tag, you must also specify the API order plus the edition tag, example using directory name:
-Pokemon (1997) {tvdb-76703} {edition-Japanese} {tvdborder-regional Japanese}
+Pokemon (1997) {tvdb-76703} {tvdborder-regional Japanese} {edition-Japanese}
 
 To apply ONLY to the default edition without a tag, use special keyword "none" as:
 Pokemon (1997) {tvdb-76703} {tvdborder-official none}
