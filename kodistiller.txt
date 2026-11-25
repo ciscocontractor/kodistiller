@@ -144,7 +144,7 @@ FILES
        ./api.key
               Optional plain-text file containing your TVDB v4 API key.
 
-       tvdb_<SERIES_ID>_metadata.yml
+       tvdb_<SERIES_ID><EDITION>_metadata.yml
               Generated Kometa metadata file written per series in the current
               working directory. Each series is tagged with a Plex label
               formatted as tvdb-<season_type> (for example, tvdb-dvd) to

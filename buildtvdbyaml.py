@@ -24,7 +24,7 @@ EDITION_TYPE = sys.argv[3] if len(sys.argv) > 3 else ""
 #Some order options: "default" (Aired), "official", "dvd", "absolute", "alternate" (Streaming), "regional", and "altdvd"
 LANGUAGE = "eng"  # 3-letter ISO 639-2 code (e.g., "eng", "spa", "fra", "jpn")
 COUNTRY = "usa"  # 3-letter ISO code, for finding content ratings
-OUTPUT_FILE = f"tvdb_{SERIES_ID}_metadata.yml"
+OUTPUT_FILE = f"tvdb_{SERIES_ID}{EDITION_TYPE}_metadata.yml"
 
 
 def fetch_series_data(tvdb, series_id, output_path, season_type="default", lang="eng"):
