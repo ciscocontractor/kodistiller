@@ -9,7 +9,7 @@ cd "$CONFIG_PATH"
 
 
 #had to rework passing arguments with xargs because the number is now variable as two or three.
-find "$MEDIA_PATH" -name '*{tvdb-*' | awk '{ \
+find "$MEDIA_PATH" -type d -name '*{tvdb-*' | awk '{ \
   if (match($0, /tvdb-[[:digit:]]+/)) {  printf  "%s ", substr($0, RSTART + 5, RLENGTH - 5) } \
   if (match($0, /tvdborder-[[:alnum:] ]+/)) { print substr($0, RSTART + 10, RLENGTH - 10) } else { print "default" } \
 }' | sort -u | tee serieslist.log | tr '\n' '\0' | xargs -0 -n 1 sh -c 'python buildtvdbyaml.py $1' _ | tee run.log

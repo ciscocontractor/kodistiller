@@ -1,0 +1,46 @@
+       Directory naming for DVD order:
+              /media/television/Firefly (2002) {tvdb-78874} {tvdborder-dvd}
+
+       Directory naming for Streaming order:
+              /media/television/Phineas and Ferb (2007) {tvdb-81848} {tvdborder-alternate}/
+
+       Directory naming targeting only a specific Plex edition:
+              /media/television/Pokemon (1997) {tvdb-76703} {tvdborder-official Japanese} {edition-Japanese}
+              /media/television/Pokemon (1997) (US EN Dub) 
+
+       Directory naming targeting only the untagged default edition:
+              /media/television/Fallout (2024) {tvdb-416744} {tvdborder-official none}/
+              /media/television/Fallout (2024) {edition-4K}/
+
+       Directory naming to use different orders for each edition:
+              /media/television/Pokemon (1997) {tvdb-76703} {tvdborder-regional none} (US EN Dub)
+              /media/television/Pokemon (1997) {tvdb-76703} {tvdborder-official Japanese} {edition-Japanese}
+
+       Directory naming targeting only Specials season, while Plex is set to an order which has no Specials:
+              /media/television/Phineas Ferb {tvdb-81848} {tvdborder-default zero}
+
+       Directory naming for the primary series to use one order and Specials to use a different order:
+              /media/television/Firefly (2002) {tvdb-78874} {tvdborder-dvd}/
+              /media/television/.zero/Firefly S00 {tvdb-78874} {tvdborder-default zero}/
+              [Note: This later is just a plain, empty directory, used only to run the match twice]
+
+
+
+       Run manually from the command line for a single series (default aired order, all editions):
+              python buildtvdbyaml.py 76703
+
+       Run manually with a specific order across all editions:
+              python buildtvdbyaml.py 78874 dvd
+
+       Run manually for a specific order and Plex edition:
+              python buildtvdbyaml.py 76703 official Japanese
+
+       Run manually for a specific order on the untagged default edition only:
+              python buildtvdbyaml.py 76703 regional none
+
+       Run manually for different order betwen the entire series and Specials season only:
+              python buildtvdbyaml.py 78874 dvd
+              python buildtvdbyaml.py 78874 default zero
+
+
+
