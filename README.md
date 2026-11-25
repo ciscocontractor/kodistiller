@@ -72,8 +72,9 @@ For complete CLI syntax, all supported TVDB ordering strings, edition-filtering 
 
 ```sh
 man ./kodistiller.1
+cat examples.txt
 ```
 
-*(Or view `kodistiller.txt` / `kodistiller.1.html` in this repository.)*
+*(Or view `examples.txt` / `kodistiller.txt` / `kodistiller.1.html` in this repository.)*
 
 2026-11-25
