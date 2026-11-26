@@ -2,4 +2,5 @@
 *.key
 *.yml
 *.log
+*.bak
 mkman.sh
