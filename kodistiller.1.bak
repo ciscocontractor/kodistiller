@@ -1,4 +1,4 @@
-.TH KODISTILLER 1 "November 25, 2026" "Version 2026-11-25" "User Commands"
+TH KODISTILLER 1 "November 25, 2026" "Version 2026-11-25" "User Commands"
 .SH NAME
 kodistiller \- extract TVDB television series data for Kometa for import to Plex
 .SH SYNOPSIS
@@ -203,6 +203,7 @@ installed
 .RB ( "python -m pip install tvdb_v4_official PyYAML" ).
 .IP \(bu 2
 A working Kometa installation and a TVDB v4 developer API key.
+
 .SH EXAMPLES
 .TP
 Scan all tagged folders in \fIMEDIA_PATH\fR and generate YAML files:
@@ -211,11 +212,34 @@ Scan all tagged folders in \fIMEDIA_PATH\fR and generate YAML files:
 Directory naming for DVD order:
 .I /media/television/Firefly (2002) {tvdb-78874} {tvdborder-dvd}
 .TP
+Directory naming for Streaming order:
+.I /media/television/Phineas and Ferb (2007) {tvdb-81848} {tvdborder-alternate}/
+.TP
 Directory naming targeting only a specific Plex edition:
-.I /media/television/Pokemon (1997) {tvdb-76703} {tvdborder-regional Japanese} {edition-Japanese}
+.I /media/television/Pokemon (1997) {tvdb-76703} {tvdborder-official Japanese} {edition-Japanese}
+.br
+.I /media/television/Pokemon (1997) (US EN Dub)
 .TP
 Directory naming targeting only the untagged default edition:
-.I /media/television/Pokemon (1997) {tvdb-76703} {tvdborder-official none}
+.I /media/television/Fallout (2024) {tvdb-416744} {tvdborder-official none}/
+.br
+.I /media/television/Fallout (2024) {edition-4K}/
+.TP
+Directory naming to use different orders for each edition:
+.I /media/television/Pokemon (1997) {tvdb-76703} {tvdborder-regional none} (US EN Dub)
+.br
+.I /media/television/Pokemon (1997) {tvdb-76703} {tvdborder-official Japanese} {edition-Japanese}
+.TP
+Directory naming targeting only the Specials season (when Plex is set to an order without Specials):
+.I /media/television/Phineas Ferb {tvdb-81848} {tvdborder-official zero}
+.TP
+Directory naming for the primary series to use one order and Specials to use a different order:
+.I /media/television/Firefly (2002) {tvdb-78874} {tvdborder-dvd}/
+.br
+.I /media/television/Firefly S00 {tvdb-78874} {tvdborder-official zero}/
+.RS
+Note: The latter is a plain, empty directory used only to trigger a second match pass for Season 00.
+.RE
 .TP
 Run manually from the command line for a single series (default aired order, all editions):
 .B python buildtvdbyaml.py 76703
@@ -224,10 +248,16 @@ Run manually with a specific order across all editions:
 .B python buildtvdbyaml.py 78874 dvd
 .TP
 Run manually for a specific order and Plex edition:
-.B python buildtvdbyaml.py 76703 regional Japanese
+.B python buildtvdbyaml.py 76703 official Japanese
 .TP
 Run manually for a specific order on the untagged default edition only:
-.B python buildtvdbyaml.py 76703 official none
+.B python buildtvdbyaml.py 76703 regional none
+.TP
+Run manually for different orders between the primary series and Specials season only:
+.B python buildtvdbyaml.py 78874 dvd
+.br
+.B python buildtvdbyaml.py 78874 official zero
+
 .SH KNOWN ISSUES & LIMITATIONS
 .TP
 .B Split or Multi-Edition Series Collisions
@@ -256,6 +286,7 @@ IMDB ID matching code is present in
 .B buildtvdbyaml.py
 as a fallback hedge against future Plex TVDB deprecations, but is currently
 disabled by default.
+
 .SH LICENSE & DISCLAIMER
 Released into the public domain without warranty or terms of use. Provided
 as-is with no guarantee of usability, fitness, or long-term maintenance.
