@@ -1,11 +1,19 @@
 # kodistiller
 
-Extract TVDB television series data into Kometa metadata YAML files for import into Plex.
+**Extract TVDB television series data into Kometa metadata YAML files for import into Plex.**
 
 In December 2026, Plex is ending data access contracts with The TVDB for television series metadata. Rather than cluttering your filesystem with per-episode NFO/JPG sidecar files or modifying embedded media tags, `kodistiller` pulls metadata directly from The TVDB v4 API and formats it for Kometa to import into your Plex database.
 
 > **Disclaimer & Public Domain:** I am no expert on Kometa or The TVDB, and I do not intend to maintain this long term. This project is released into the **public domain** without warranty, expressed or implied, in hopes that it helps those affected or inspires a better tool.  
 > **AI Content Disclosure:** Portions of the Python code and documentation were created with AI assistance.
+
+---
+
+## Goals
+* Aquire Television series metadata directly from the TVDB and import to Plex.
+* Prevent clutter of the media library filesystems or require write access to them.
+* Make it fully automatic. Once installed and scheduled, it should update without manual tasks.
+* Provide flexibility to use different episode ordering on a per-series basis. 
 
 ---
 
@@ -61,7 +69,7 @@ python buildtvdbyaml.py 78874 dvd
 
 ## Known Issues
 
-* **Multiple Editions or Split Series:** By default, generated YAML files apply to all versions or editions of a show sharing the same TVDB ID (for example, *Pokemon (Aired in JP)* and *Pokemon (US Dub)*). As of version `2026-11-24`, you can isolate specific editions using Plex `{edition-...}` tags paired with a third argument or space-separated order tag (e.g., `{tvdborder-regional Japanese}` or `none` for untagged default editions).
+* **Multiple Editions or Split Series:** By default, generated YAML files apply to all versions or editions of a show sharing the same TVDB ID (for example, *Pokemon (Aired in JP)* and *Pokemon (US Dub)*). As of version `2026-11-24`, you can isolate specific editions using Plex `{edition-...}` tags paired with a third argument or space-separated order tag (e.g., `{tvdborder-regional Japanese}` or `none` for untagged default editions). You may also specify `zero` like an edition tag to collect data only for Season Zero "Specials", while leaving data of other seasons managed by Plex providers.
 * **IMDB Dual-ID Matching:** Code to match on both IMDB and TVDB IDs is included in `buildtvdbyaml.py` as a hedge against future Plex changes, though it is currently disabled by default.
 
 ---
@@ -77,4 +85,4 @@ cat examples.txt
 
 *(Or view `examples.txt` / `kodistiller.txt` / `kodistiller.1.html` in this repository.)*
 
-2026-11-25
+2026-11-26
