@@ -1,0 +1,270 @@
+.TH KODISTILLER 1 "November 25, 2026" "Version 2026-11-25" "User Commands"
+.SH NAME
+kodistiller \- extract TVDB television series data for Kometa for import to Plex
+.SH SYNOPSIS
+.B buildtvdbyaml.sh
+.br
+.B python buildtvdbyaml.py
+.RI [ series_id
+.RI [ season_type
+.RI [ edition_type ]]]
+.SH DESCRIPTION
+.B kodistiller
+extracts television series metadata from The TVDB v4 API and generates YAML
+metadata files formatted for Kometa to import directly into a Plex database.
+It consists of a POSIX-compliant shell wrapper
+.RB ( buildtvdbyaml.sh )
+that scans media directories for tagged series folders, and a Python generator
+.RB ( buildtvdbyaml.py )
+that queries the API and writes per-series YAML output files.
+.PP
+Because Plex ends data access contracts with The TVDB in December 2026,
+.B kodistiller
+provides an automated workaround for series whose metadata or episode ordering
+from alternative sources is incomplete or inaccurate, without requiring local
+NFO/JPG sidecar files or modifying embedded media tags.
+.PP
+.B kodistiller
+retrieves series, season, and episode titles, summaries, first air dates,
+series content ratings, and episode thumbnails. It does
+.I not
+populate genres, actors, studios, collections, episode ratings, or series and
+season posters/artwork. Users should generally add new shows using TMDB metadata
+first to fetch missing artwork and credits, and apply
+.B kodistiller
+where episode ordering or metadata requires TVDB data.
+.PP
+Note that Kometa cannot alter the episode ordering flag inside Plex for a
+library or series; changing the episode order setting in Plex remains a manual
+step.
+.SH OPTIONS & ARGUMENTS
+.B buildtvdbyaml.sh
+takes no command-line flags; it is configured by editing variables at the top
+of the script and scanning folder tags in
+.IR MEDIA_PATH .
+.PP
+.B buildtvdbyaml.py
+accepts up to three positional arguments:
+.TP
+.I series_id
+Numeric TVDB series ID (defaults to
+.B 121361
+if omitted).
+.TP
+.I season_type
+The TVDB API ordering string (defaults to
+.BR default ).
+Common values include:
+.RS
+.TP
+.B default
+Aired order (maps to
+.B official
+for season lookups).
+.TP
+.B official
+Official aired order.
+.TP
+.B dvd
+DVD release order.
+.TP
+.B absolute
+Absolute episode numbering order.
+.TP
+.B alternate
+Streaming or alternate order.
+.TP
+.B regional
+Regional release order.
+.TP
+.B altdvd
+Alternate DVD order.
+.RE
+.TP
+.I edition_type
+Optional Plex edition filter used to restrict metadata matching to a specific
+edition (for split or multi-edition series).
+.RS
+.TP
+.I <edition_name>
+Matches only Plex items whose edition contains
+.I <edition_name>
+(generates
+.BR edition_contains ).
+.TP
+.B none
+Matches only the default edition lacking an edition tag (generates
+.BR "blank_edition: \(dqtrue\(dq" ).
+.TP
+.I (omitted)
+Applies metadata across all editions and split versions of the series.
+.RE
+.SH DIRECTORY TAGGING
+When running
+.BR buildtvdbyaml.sh ,
+series directories under
+.I MEDIA_PATH
+are parsed using curly-brace tags in the directory name:
+.TP
+.BI {tvdb- digits }
+Required. Specifies the numeric TVDB series ID.
+.TP
+.BI {tvdborder- order }
+Optional. Specifies the TVDB API season ordering string (defaults to
+.B default
+if omitted).
+.TP
+.BI "{tvdborder-" "order edition" "}"
+Optional. Specifies both the TVDB API season ordering string and an edition
+filter separated by a space. Use
+.B none
+as the edition keyword to target only untagged default editions.
+.SH CONFIGURATION
+.SS Shell Script (buildtvdbyaml.sh)
+Edit the path variables at the top of
+.BR buildtvdbyaml.sh :
+.TP
+.B MEDIA_PATH
+Root directory of your television library (default:
+.IR /media/television ).
+.TP
+.B CONFIG_PATH
+Target Kometa metadata directory where generated YAML files and logs are
+written (default:
+.IR /usr/local/share/kometa/config/metadata/Television/ ).
+.SS Python Script (buildtvdbyaml.py)
+Customize the configuration block at the top of
+.BR buildtvdbyaml.py :
+.TP
+.B TVDB_API_KEY
+Your TVDB v4 API key. Read automatically from
+.I api.key
+in the working directory if present, otherwise set directly in the script.
+Never share your API key publicly.
+.TP
+.B TVDB_PIN
+Subscriber PIN string if required by your TVDB API key (default:
+.BR None ).
+.TP
+.B LANGUAGE
+3-letter ISO 639-2 language code used to fetch localized series, season, and
+episode titles and summaries when available (default:
+.BR eng ).
+.TP
+.B COUNTRY
+3-letter ISO country code used to select series content ratings (default:
+.BR usa ).
+.SS Kometa Configuration
+Add the output directory to your Kometa configuration file under your TV
+library:
+.PP
+.RS
+.nf
+TV Shows:
+  metadata_files:
+    - folder: config/metadata/Television
+.fi
+.RE
+.SH FILES
+.TP
+.I ./api.key
+Optional plain-text file containing your TVDB v4 API key.
+.TP
+.I tvdb_<SERIES_ID><EDITION>_metadata.yml
+Generated Kometa metadata file written per series in the current working
+directory. Each series is tagged with a Plex label formatted as
+.BI tvdb- <season_type>
+(for example,
+.BR tvdb-dvd )
+to identify TVDB-managed shows in the Plex UI.
+.TP
+.I serieslist.log
+Deduplicated list of parsed series IDs, orders, and editions generated by
+.BR buildtvdbyaml.sh .
+.TP
+.I run.log
+Execution output log generated by
+.BR buildtvdbyaml.sh .
+.SH REQUIREMENTS
+.IP \(bu 2
+A Unix-like operating system (POSIX
+.BR sh ,
+.BR awk ,
+.BR find ,
+.BR sort ,
+.BR tr ,
+.BR xargs ). Windows compatibility is untested (may require Cygwin).
+.IP \(bu 2
+Python 3 with
+.B tvdb_v4_official
+and
+.B PyYAML
+installed
+.RB ( "python -m pip install tvdb_v4_official PyYAML" ).
+.IP \(bu 2
+A working Kometa installation and a TVDB v4 developer API key.
+.SH EXAMPLES
+.TP
+Scan all tagged folders in \fIMEDIA_PATH\fR and generate YAML files:
+.B ./buildtvdbyaml.sh
+.TP
+Directory naming for DVD order:
+.I /media/television/Firefly (2002) {tvdb-78874} {tvdborder-dvd}
+.TP
+Directory naming targeting only a specific Plex edition:
+.I /media/television/Pokemon (1997) {tvdb-76703} {tvdborder-regional Japanese} {edition-Japanese}
+.TP
+Directory naming targeting only the untagged default edition:
+.I /media/television/Pokemon (1997) {tvdb-76703} {tvdborder-official none}
+.TP
+Run manually from the command line for a single series (default aired order, all editions):
+.B python buildtvdbyaml.py 76703
+.TP
+Run manually with a specific order across all editions:
+.B python buildtvdbyaml.py 78874 dvd
+.TP
+Run manually for a specific order and Plex edition:
+.B python buildtvdbyaml.py 76703 regional Japanese
+.TP
+Run manually for a specific order on the untagged default edition only:
+.B python buildtvdbyaml.py 76703 official none
+.SH KNOWN ISSUES & LIMITATIONS
+.TP
+.B Split or Multi-Edition Series Collisions
+By default, generated YAML files match on TVDB ID across all editions or split
+entries of a show (for example,
+.I Pokemon (Aired in JP)
+and
+.IR "Pokemon (US Dub)" ).
+If two folders share the same TVDB ID with different
+.B {tvdborder-}
+tags without edition specifiers, one ordering overwrites or applies to both.
+Use Plex
+.B {edition-}
+tags paired with
+.B "{tvdborder-<order> <edition>}"
+(or
+.BR none )
+to isolate metadata per edition.
+.TP
+.B Partial Metadata Scope
+Episode ratings, cast/crew, genres, studios, collections, and series/season
+posters are not imported.
+.TP
+.B Disabled Dual-ID Matching
+IMDB ID matching code is present in
+.B buildtvdbyaml.py
+as a fallback hedge against future Plex TVDB deprecations, but is currently
+disabled by default.
+.SH LICENSE & DISCLAIMER
+Released into the public domain without warranty or terms of use. Provided
+as-is with no guarantee of usability, fitness, or long-term maintenance.
+.PP
+.B AI Content Disclosure:
+Portions of the Python codebase and documentation were created with AI
+assistance.
+.SH SEE ALSO
+.BR awk (1),
+.BR find (1),
+.BR python (1),
+.BR xargs (1)

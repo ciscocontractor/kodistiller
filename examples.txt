@@ -17,11 +17,11 @@
               /media/television/Pokemon (1997) {tvdb-76703} {tvdborder-official Japanese} {edition-Japanese}
 
        Directory naming targeting only Specials season, while Plex is set to an order which has no Specials:
-              /media/television/Phineas Ferb {tvdb-81848} {tvdborder-default zero}
+              /media/television/Phineas Ferb {tvdb-81848} {tvdborder-official zero}
 
        Directory naming for the primary series to use one order and Specials to use a different order:
               /media/television/Firefly (2002) {tvdb-78874} {tvdborder-dvd}/
-              /media/television/.zero/Firefly S00 {tvdb-78874} {tvdborder-default zero}/
+              /media/television/Firefly S00 {tvdb-78874} {tvdborder-official zero}/
               [Note: This later is just a plain, empty directory, used only to run the match twice]
 
 
@@ -40,7 +40,7 @@
 
        Run manually for different order betwen the entire series and Specials season only:
               python buildtvdbyaml.py 78874 dvd
-              python buildtvdbyaml.py 78874 default zero
+              python buildtvdbyaml.py 78874 official zero
 
 
 

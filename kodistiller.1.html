@@ -14,14 +14,15 @@
     code.Nm, .Fl, .Cm, .Ic, code.In, .Fd, .Fn, .Cd { font-weight: bold;
       font-family: inherit; }
   </style>
-  <title>KODISTILLER(1)</title>
+  <title>()</title>
 </head>
 <body>
 <div class="head" role="doc-pageheader" aria-label="Manual header
-  line"><span class="head-ltitle">KODISTILLER(1)</span>
-  <span class="head-vol">User Commands</span>
-  <span class="head-rtitle">KODISTILLER(1)</span></div>
+  line"><span class="head-ltitle">()</span>
+  <span class="head-vol"></span><span class="head-rtitle">()</span></div>
 <main class="manual-text">
+TH KODISTILLER 1 &quot;November 25, 2026&quot; &quot;Version 2026-11-25&quot;
+  &quot;User Commands&quot;
 <section class="Sh">
 <h2 class="Sh" id="NAME"><a class="permalink" href="#NAME">NAME</a></h2>
 <p class="Pp">kodistiller - extract TVDB television series data for Kometa for
@@ -206,7 +207,9 @@
       <b>xargs</b>).<b>Windows</b>compatibility<b>is</b>untested<b>(may</b>require<b>Cygwin).</b></li>
   <li>Python 3 with <b>tvdb_v4_official</b> and <b>PyYAML</b> installed
       (<b>python -m pip install tvdb_v4_official PyYAML</b>).</li>
-  <li>A working Kometa installation and a TVDB v4 developer API key.</li>
+  <li>A working Kometa installation and a TVDB v4 developer API key.
+    <p class="Pp"></p>
+  </li>
 </ul>
 </section>
 <section class="Sh">
@@ -219,13 +222,44 @@
     DVD order:</a></dt>
   <dd><i>/media/television/Firefly (2002) {tvdb-78874} {tvdborder-dvd}</i></dd>
   <dt id="Directory~2"><a class="permalink" href="#Directory~2">Directory naming
-    targeting only a specific Plex edition:</a></dt>
-  <dd><i>/media/television/Pokemon (1997) {tvdb-76703} {tvdborder-regional
-      Japanese} {edition-Japanese}</i></dd>
+    for Streaming order:</a></dt>
+  <dd><i>/media/television/Phineas and Ferb (2007) {tvdb-81848}
+      {tvdborder-alternate}/</i></dd>
   <dt id="Directory~3"><a class="permalink" href="#Directory~3">Directory naming
-    targeting only the untagged default edition:</a></dt>
+    targeting only a specific Plex edition:</a></dt>
   <dd><i>/media/television/Pokemon (1997) {tvdb-76703} {tvdborder-official
-      none}</i></dd>
+      Japanese} {edition-Japanese}</i>
+    <br/>
+    <i>/media/television/Pokemon (1997) (US EN Dub)</i></dd>
+  <dt id="Directory~4"><a class="permalink" href="#Directory~4">Directory naming
+    targeting only the untagged default edition:</a></dt>
+  <dd><i>/media/television/Fallout (2024) {tvdb-416744} {tvdborder-official
+      none}/</i>
+    <br/>
+    <i>/media/television/Fallout (2024) {edition-4K}/</i></dd>
+  <dt id="Directory~5"><a class="permalink" href="#Directory~5">Directory naming
+    to use different orders for each edition:</a></dt>
+  <dd><i>/media/television/Pokemon (1997) {tvdb-76703} {tvdborder-regional none}
+      (US EN Dub)</i>
+    <br/>
+    <i>/media/television/Pokemon (1997) {tvdb-76703} {tvdborder-official
+      Japanese} {edition-Japanese}</i></dd>
+  <dt id="Directory~6"><a class="permalink" href="#Directory~6">Directory naming
+    targeting only the Specials season (when Plex is set to an order without
+    Specials):</a></dt>
+  <dd><i>/media/television/Phineas Ferb {tvdb-81848} {tvdborder-official
+      zero}</i></dd>
+  <dt id="Directory~7"><a class="permalink" href="#Directory~7">Directory naming
+    for the primary series to use one order and Specials to use a different
+    order:</a></dt>
+  <dd><i>/media/television/Firefly (2002) {tvdb-78874} {tvdborder-dvd}/</i>
+    <br/>
+    <i>/media/television/Firefly S00 {tvdb-78874} {tvdborder-official
+    zero}/</i></dd>
+</dl>
+<div class="Bd-indent">Note: The latter is a plain, empty directory used only to
+  trigger a second match pass for Season 00.</div>
+<dl class="Bl-tag">
   <dt id="Run"><a class="permalink" href="#Run">Run manually from the command
     line for a single series (default aired order, all editions):</a></dt>
   <dd><b>python buildtvdbyaml.py 76703</b></dd>
@@ -234,10 +268,17 @@
   <dd><b>python buildtvdbyaml.py 78874 dvd</b></dd>
   <dt id="Run~3"><a class="permalink" href="#Run~3">Run manually for a specific
     order and Plex edition:</a></dt>
-  <dd><b>python buildtvdbyaml.py 76703 regional Japanese</b></dd>
+  <dd><b>python buildtvdbyaml.py 76703 official Japanese</b></dd>
   <dt id="Run~4"><a class="permalink" href="#Run~4">Run manually for a specific
     order on the untagged default edition only:</a></dt>
-  <dd><b>python buildtvdbyaml.py 76703 official none</b></dd>
+  <dd><b>python buildtvdbyaml.py 76703 regional none</b></dd>
+  <dt id="Run~5"><a class="permalink" href="#Run~5">Run manually for different
+    orders between the primary series and Specials season only:</a></dt>
+  <dd><b>python buildtvdbyaml.py 78874 dvd</b>
+    <br/>
+    <b>python buildtvdbyaml.py 78874 official zero</b>
+    <p class="Pp"></p>
+  </dd>
 </dl>
 </section>
 <section class="Sh">
@@ -261,7 +302,9 @@
     Matching</b></a></dt>
   <dd>IMDB ID matching code is present in <b>buildtvdbyaml.py</b> as a fallback
       hedge against future Plex TVDB deprecations, but is currently disabled by
-      default.</dd>
+      default.
+    <p class="Pp"></p>
+  </dd>
 </dl>
 </section>
 <section class="Sh">
@@ -281,8 +324,7 @@
 </section>
 </main>
 <div class="foot" role="doc-pagefooter" aria-label="Manual footer
-  line"><span class="foot-left">Version 2026-11-25</span>
-  <span class="foot-date">November 25, 2026</span>
-  <span class="foot-right">KODISTILLER(1)</span></div>
+  line"><span class="foot-left"></span><span class="foot-date"></span>
+  <span class="foot-right">()</span></div>
 </body>
 </html>
