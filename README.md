@@ -65,6 +65,12 @@ Or generate a single series manually from the command line:
 python buildtvdbyaml.py 78874 dvd
 ```
 
+### 4. Optional full automation
+Schedule to run the buildtvdbyaml.sh weekly by cron or your scheduling agent.
+Schedule kometa to run daily, after the Plex scheduled maintenance window.
+
+Series data could be updated more frequently, but I don't want to get people banned from overusing the TVDB API on a developer key. Any new episodes found during Plex scheduled library scans will get updated by kometa during its run, using the previously fetched data.
+
 ---
 
 ## Known Issues
