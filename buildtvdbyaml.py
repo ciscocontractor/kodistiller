@@ -146,9 +146,10 @@ def fetch_series_data(tvdb, series_id, output_path, season_type="default", lang=
         ep_entry = {}
         if ep.get("name"):
             # this is a weird one, and I'm not sure this is valid for tvdb episodes, but duplicate S##E## for two episode identifiers
-            #print(f"ep title: {ep["name"]}")
+            #print(f"ep title: {ep["name"]}")  #DEBUG
             ep_entry["title"] = ep["name"] if not seasons_dict[s_num]["episodes"].get(e_num) else seasons_dict[s_num]["episodes"][e_num].get("title") + " / " + ep["name"]
         if ep.get("overview"):
+            #print(f"ep summary: {ep["overview"]}")  #DEBUG
             ep_entry["summary"] = ep["overview"] if not seasons_dict[s_num]["episodes"].get(e_num) else seasons_dict[s_num]["episodes"][e_num].get("summary") + " / " + ep["overview"]
         if ep.get("aired"):
             ep_entry["originally_available"] = ep["aired"]
