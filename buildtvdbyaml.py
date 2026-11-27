@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-### ver 2026-11-25
+### ver 2026-11-27
 
 ### Be sure to install tvdb-v4 python Package
 #python -m pip install tvdb_v4_official
@@ -20,8 +20,8 @@ TVDB_PIN = None  # Set to your subscriber PIN string if required by your project
 
 SERIES_ID = sys.argv[1] if len(sys.argv) > 1 else "121361"  # Example: Game of Thrones
 SEASON_TYPE = sys.argv[2] if len(sys.argv) > 2 else "default"
+#Some order options: "official" (Aired), "dvd", "absolute", "alternate" (Streaming), "regional", and "altdvd"
 EDITION_TYPE = sys.argv[3] if len(sys.argv) > 3 else ""
-#Some order options: "default" (Aired), "official", "dvd", "absolute", "alternate" (Streaming), "regional", and "altdvd"
 LANGUAGE = "eng"  # 3-letter ISO 639-2 code (e.g., "eng", "spa", "fra", "jpn")
 COUNTRY = "usa"  # 3-letter ISO code, for finding content ratings
 OUTPUT_FILE = f"tvdb_{SERIES_ID}{EDITION_TYPE}_metadata.yml"

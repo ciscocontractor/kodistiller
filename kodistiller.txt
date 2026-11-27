@@ -1,6 +1,6 @@
 ()                                                                          ()
 
-TH KODISTILLER 1 "November 25, 2026" "Version 2026-11-25" "User Commands"
+TH KODISTILLER 1 "November 26, 2026" "Version 2026-11-26" "User Commands"
 
 NAME
      kodistiller - extract TVDB television series data for Kometa for import

@@ -47,7 +47,7 @@ In December 2026, Plex is ending data access contracts with The TVDB for televis
    ```
 
 ### 3. Tag Your Folders & Run
-Add `{tvdb-<id>}` and an optional `{tvdborder-<order>}` tag (e.g., `default`, `official`, `dvd`, `absolute`, `alternate`) to your series directories:
+Add `{tvdb-<id>}` and an optional `{tvdborder-<order>}` tag (e.g., `official`, `dvd`, `absolute`, `alternate`) to your series directories:
 
 ```text
 /media/television/Firefly (2002) {tvdb-78874} {tvdborder-dvd}
@@ -91,4 +91,4 @@ cat examples.txt
 
 *(Or view `examples.txt` / `kodistiller.txt` / `kodistiller.1.html` in this repository.)*
 
-2026-11-26
+2026-11-27
