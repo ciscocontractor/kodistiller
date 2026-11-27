@@ -39,8 +39,8 @@ def fetch_series_data(tvdb, series_id, output_path, season_type="default", lang=
         show_rating = rating.get('name') if rating.get('country') == COUNTRY else ""
     show_language = series.get("originalLanguage", lang)
 
-    print(f"TVDB ID: {series_id}")  # DEBUG
     remote_ids = series.get("remoteIds", [])
+    print(f"TVDB ID: {series_id}")  # DEBUG
     tmdb_id = next(
         (item["id"] for item in remote_ids if item.get("sourceName") == "TheMovieDB.com"),
         ""
@@ -65,6 +65,8 @@ def fetch_series_data(tvdb, series_id, output_path, season_type="default", lang=
 
     # build season specific data, loop by season ID, map to season numbering
     # episodes have a default season which they belong to, but there is no default season per se
+    # I don't like assuming this, because default ordering is not guaranteed to be official ordering
+    # but the series_extended data doesn't include the word "default" when we parse the entire tree
     serseason_type = "official" if season_type == "default" else season_type
     seasons_dict={}
 
@@ -79,7 +81,7 @@ def fetch_series_data(tvdb, series_id, output_path, season_type="default", lang=
         season_id = season["id"]
         s_num = season["number"]
 
-        #When overriding only the Speicals season 0, abort loop
+        #When overriding only the Specials season 0, abort loop
         if EDITION_TYPE == 'zero' and s_num > 0:
             continue
 
@@ -111,8 +113,9 @@ def fetch_series_data(tvdb, series_id, output_path, season_type="default", lang=
     ########
 
     # now loop the episode tree, which is ordered by episode ID, including season markers as a child item,
-    # because an episode item will belown to different seasons based on the season_type
+    # because an episode item will belong to different seasons based on the season_type, even duplicate S##E## mappings.
     # unsure if we need to force season_type official instead of default. are there cases where default!=official?
+    # Apparently there are, but a tiny minority. Probably best for the user to just not intentionally use default in those cases.
     episodes = []
     page = 0
     while True:
@@ -132,7 +135,7 @@ def fetch_series_data(tvdb, series_id, output_path, season_type="default", lang=
         if s_num is None or e_num is None:
             continue
 
-        #When overriding only the Speicals season 0, abort loop
+        #When overriding only the Specials season 0, abort loop
         if EDITION_TYPE == 'zero' and s_num > 0:
             continue
 
@@ -145,7 +148,8 @@ def fetch_series_data(tvdb, series_id, output_path, season_type="default", lang=
         # build array of episode data
         ep_entry = {}
         if ep.get("name"):
-            # this is a weird one, and I'm not sure this is valid for tvdb episodes, but duplicate S##E## for two episode identifiers
+            # this is a weird one, but apparently is valid for tvdb episodes with duplicate S##E## for two episode identifiers
+            # could use better logic for edge cases where one or the other is missing title or summary
             #print(f"ep title: {ep["name"]}")  #DEBUG
             ep_entry["title"] = ep["name"] if not seasons_dict[s_num]["episodes"].get(e_num) else seasons_dict[s_num]["episodes"][e_num].get("title") + " / " + ep["name"]
         if ep.get("overview"):
@@ -191,7 +195,6 @@ def fetch_series_data(tvdb, series_id, output_path, season_type="default", lang=
         show_block["originally_available"] = show_available
     if show_rating:
         show_block["content_rating"] = show_rating
-    #if season_type!="default":
 
     # Now build the episide tree
     show_block["seasons"] = sorted_seasons
@@ -208,6 +211,8 @@ def fetch_series_data(tvdb, series_id, output_path, season_type="default", lang=
     mapping_id = {} if EDITION_TYPE == "zero" else mapping_id
     #print(f"map edition: {mapping_id}") ## DEBUG
 
+    # we use a bit if a trick here with order of kometa processing when we are importing the same mapping_id twice
+    # tvdb_78874_zero will be imported after tvdb_78874, so we can import Firefly DVD order and overwrite S0 as offical order
     tvdb_id = str(int(series_id))
     tvdb_header = "tvdb_"+tvdb_id+"_"+EDITION_TYPE if EDITION_TYPE else "tvdb_"+tvdb_id
     imdb_header = "imdb_"+imdb_id+"_"+EDITION_TYPE if EDITION_TYPE else "imdb_"+imdb_id
