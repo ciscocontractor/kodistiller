@@ -179,6 +179,10 @@ def fetch_series_data(tvdb, series_id, output_path, season_type="default", lang=
     # Build top-level Kometa metadata structure
     show_block = {}
     # Build show-level Kometa metadata structure
+    if season_type:  #should always be true
+        show_block["label"] = "tvdb-"+season_type
+    if EDITION_TYPE == 'zero':  #season_type should always exist
+        show_block["label"] = "tvdb-"+season_type+", tvdb-zero"  
     if show_title:
         show_block["title"] = show_title
     if show_summary:
@@ -188,8 +192,6 @@ def fetch_series_data(tvdb, series_id, output_path, season_type="default", lang=
     if show_rating:
         show_block["content_rating"] = show_rating
     #if season_type!="default":
-    if season_type:
-        show_block["label"] = "tvdb-" + season_type
 
     # Now build the episide tree
     show_block["seasons"] = sorted_seasons
